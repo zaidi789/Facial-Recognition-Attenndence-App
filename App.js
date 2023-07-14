@@ -1,15 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import MainScreen from './src/components/MainScreen';
-import FaceApiTest from './src/components/FaceApiTest';
-import Main from './src/components/Main';
+
+import Nav from './src/navigation';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Main />
-    </View>
-  );
+  return <Nav />;
 }
 
 const styles = StyleSheet.create({

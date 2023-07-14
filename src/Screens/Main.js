@@ -333,6 +333,7 @@ import FaceSDK, {
   MatchFacesSimilarityThresholdSplit,
   RNFaceApi,
 } from '@regulaforensics/react-native-face-api';
+import LinearGradient from 'react-native-linear-gradient';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 const eventManager = new NativeEventEmitter(RNFaceApi);
@@ -492,218 +493,220 @@ const Main = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          // backgroundColor: 'green',
-          alignItems: 'center',
-          marginBottom: 0,
-          height: '20%',
-          width: '100%',
-        }}>
-        <Text
-          style={{
-            fontSize: 35,
-            marginTop: 20,
-            marginBottom: 20,
-            fontWeight: 'bold',
-            color: 'black',
-          }}>
-          Welcome
-        </Text>
-        <Text
-          style={{
-            fontSize: 20,
-            marginTop: 0,
-            marginBottom: 20,
-            fontWeight: 'bold',
-            color: 'black',
-          }}>
-          Select images to compare
-        </Text>
-      </View>
-
-      <View
-        style={{
-          // backgroundColor: 'gray',
-          // alignItems: 'center',
-          // justifyContent: 'flex-start',
-          flexDirection: 'row',
-          height: '40%',
-          width: '100%',
-        }}>
+    <LinearGradient colors={['#f9b16e', '#82f4b1', '#ffeda0']}>
+      <View style={styles.container}>
         <View
           style={{
-            // backgroundColor: 'yellow',
-            justifyContent: 'center',
+            // backgroundColor: 'green',
             alignItems: 'center',
-            width: '50%',
-            // height: '60%',
-          }}>
-          <Text
-            style={{
-              fontSize: 14,
-              marginTop: 5,
-              marginBottom: 5,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            1st Image
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              marginBottom: 30,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            Select images / Capture
-          </Text>
-          <TouchableHighlight onPress={() => pickImage(true)}>
-            <Image
-              style={{
-                height: 150,
-                width: 200,
-              }}
-              source={img1}
-              resizeMode="contain"
-            />
-          </TouchableHighlight>
-        </View>
-        <View
-          style={{
-            // backgroundColor: 'pink',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '50%',
-            // height: '60%',
-          }}>
-          <Text
-            style={{
-              fontSize: 14,
-              marginTop: 5,
-              marginBottom: 5,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            2nd Image
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              marginBottom: 30,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            Select images / Capture
-          </Text>
-          <TouchableHighlight onPress={() => pickImage(false)}>
-            <Image
-              style={{
-                height: 150,
-                width: 200,
-              }}
-              source={img2}
-              resizeMode="contain"
-            />
-          </TouchableHighlight>
-        </View>
-      </View>
-      <View>
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 10,
-            // backgroundColor: 'gray',
-            height: '25%',
+            marginBottom: 0,
+            height: '20%',
             width: '100%',
-            justifyContent: 'space-between',
-            marginTop: 10,
-            alignItems: 'center',
           }}>
-          <TouchableOpacity
-            style={{
-              borderWidth: 1,
-              borderRadius: 20,
-              padding: 5,
-              backgroundColor: '#48cae4',
-              width: 150,
-              height: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              matchFaces();
-            }}>
-            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
-              Match
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              borderWidth: 1,
-              borderRadius: 20,
-              padding: 5,
-              backgroundColor: '#48cae4',
-              width: 150,
-              height: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              clearResults();
-            }}>
-            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
-              Clear
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 0,
-            // backgroundColor: 'red',
-            height: '14%',
-            // height: '10%',
-          }}>
-          <TouchableOpacity
-            style={{
-              borderWidth: 1,
-              borderRadius: 20,
-              padding: 5,
-              backgroundColor: '#48cae4',
-              width: 150,
-              height: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              performLiveness();
-            }}>
-            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
-              Live Capture
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <Text
             style={{
-              // marginLeft: -20,
+              fontSize: 35,
+              marginTop: 20,
+              marginBottom: 20,
               fontWeight: 'bold',
               color: 'black',
-              fontSize: 18,
-              marginTop: 10,
             }}>
-            Similarity %age: {similarity}
+            Welcome
           </Text>
-          {/* <Text style={{marginLeft: 20, fontWeight: 'bold', color: 'black'}}>
+          <Text
+            style={{
+              fontSize: 20,
+              marginTop: 0,
+              marginBottom: 20,
+              fontWeight: 'bold',
+              color: 'black',
+            }}>
+            Select images to compare
+          </Text>
+        </View>
+
+        <View
+          style={{
+            // backgroundColor: 'gray',
+            // alignItems: 'center',
+            // justifyContent: 'flex-start',
+            flexDirection: 'row',
+            height: '40%',
+            width: '100%',
+          }}>
+          <View
+            style={{
+              // backgroundColor: 'yellow',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '50%',
+              // height: '60%',
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 5,
+                fontWeight: 'bold',
+                color: 'black',
+              }}>
+              1st Image
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                marginBottom: 30,
+                fontWeight: 'bold',
+                color: 'black',
+              }}>
+              Select images / Capture
+            </Text>
+            <TouchableHighlight onPress={() => pickImage(true)}>
+              <Image
+                style={{
+                  height: 150,
+                  width: 200,
+                }}
+                source={img1}
+                resizeMode="contain"
+              />
+            </TouchableHighlight>
+          </View>
+          <View
+            style={{
+              // backgroundColor: 'pink',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '50%',
+              // height: '60%',
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 5,
+                fontWeight: 'bold',
+                color: 'black',
+              }}>
+              2nd Image
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                marginBottom: 30,
+                fontWeight: 'bold',
+                color: 'black',
+              }}>
+              Select images / Capture
+            </Text>
+            <TouchableHighlight onPress={() => pickImage(false)}>
+              <Image
+                style={{
+                  height: 150,
+                  width: 200,
+                }}
+                source={img2}
+                resizeMode="contain"
+              />
+            </TouchableHighlight>
+          </View>
+        </View>
+        <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              padding: 10,
+              // backgroundColor: 'gray',
+              height: '25%',
+              width: '100%',
+              justifyContent: 'space-between',
+              marginTop: 10,
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 5,
+                backgroundColor: '#48cae4',
+                width: 150,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                matchFaces();
+              }}>
+              <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+                Match
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 5,
+                backgroundColor: '#48cae4',
+                width: 150,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                clearResults();
+              }}>
+              <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+                Clear
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 0,
+              // backgroundColor: 'red',
+              height: '14%',
+              // height: '10%',
+            }}>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 5,
+                backgroundColor: '#48cae4',
+                width: 150,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                performLiveness();
+              }}>
+              <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+                Live Capture
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Text
+              style={{
+                // marginLeft: -20,
+                fontWeight: 'bold',
+                color: 'black',
+                fontSize: 18,
+                marginTop: 10,
+              }}>
+              Similarity %age: {similarity}
+            </Text>
+            {/* <Text style={{marginLeft: 20, fontWeight: 'bold', color: 'black'}}>
             Liveness: {livenessStatus}
           </Text> */}
+          </View>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -714,7 +717,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // justifyContent: 'center',
     // alignItems: 'center',
-    backgroundColor: '#ffafcc',
+    // backgroundColor: '#ffafcc',
     // marginBottom: 12,
   },
   welcome: {
