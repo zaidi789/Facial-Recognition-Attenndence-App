@@ -498,3 +498,92 @@
 // });
 
 // export default Register;
+
+
+
+//////////////////////////////////////////////
+
+
+
+
+    
+ 
+
+  
+  
+
+<View
+  style={{
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  }}>
+  <View
+    style={{
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: '60%',
+      backgroundColor: 'green',
+      borderWidth: 2,
+      borderStyle: 'dashed',
+    }}>
+    <Text
+      style={{
+        color: 'black',
+        fontSize: 16,
+        fontWeight: 'bold',
+      }}>
+      Click below to capture
+    </Text>
+    <TouchableOpacity
+      onPress={() => {
+        if (rollNo !== '') {
+          pickImage(true);
+        } else {
+          Alert.alert('Warning', 'Please enter roll no');
+        }
+      }}>
+      <Image
+        style={{
+          height: 150,
+          width: 150,
+          resizeMode: 'center',
+        }}
+        source={img1}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+</View>
+</View>
+<View style={{}}>
+<View
+  style={{
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 30,
+    height: '10%',
+    backgroundColor: 'yellow',
+  }}>
+  <TouchableOpacity
+    style={{
+      borderWidth: 1,
+      borderRadius: 20,
+      padding: 5,
+      backgroundColor: '#48cae4',
+      width: 150,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    onPress={() => {
+      handelSubmit();
+    }}>
+    <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+      Submit
+    </Text>
+  </TouchableOpacity>
+</View>
+</View>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,10 +8,11 @@ import {
   LogBox,
   TouchableOpacity,
   NativeEventEmitter,
-  TextInput,
   PermissionsAndroid,
   Platform,
+  RootTagContext,
 } from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 import FaceSDK, {
   Enum,
@@ -23,6 +24,10 @@ import FaceSDK, {
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import RNFS from 'react-native-fs';
+import SelectDropdown from 'react-native-select-dropdown';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {TextInput} from 'react-native-paper';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 // const eventManager = new NativeEventEmitter(RNFaceApi);
@@ -32,12 +37,17 @@ var image1 = new MatchFacesImage();
 const Register = () => {
   const [img1, setImg1] = useState(require('../Images/ChrissEvans.jpg'));
   const [rollNo, setRollNo] = useState('');
-  const [obj, setObj] = useState([{code: '', image_url: ''}]);
-  const [cropImg, setCropImg] = useState(require('../Images/ChrissEvans.jpg'));
-  const [tempUri, setTempUri] = useState(null);
-  const [base64Image, setBase64Image] = useState('');
-  const [testImage, setTestImage] = useState('');
+  const [objs, setObjs] = useState([
+    {name: '', image_url: '', roll_no: '', section_id: ''},
+  ]);
 
+  const [name, setName] = useState('');
+  const [section, setSection] = useState('');
+  const citiesDropdownRef = useRef();
+  const [data, setData] = useState([]);
+  const [preview, setPreview] = useState(false);
+
+  const countries = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   useEffect(() => {
     const videoEncoderCompletionEvent = json => {
       const response = JSON.parse(json);
@@ -55,17 +65,34 @@ const Register = () => {
     );
   }, []);
 
-  const OpenCamera = () => {
+  // s
+  const pickImage = () => {
     const config = {
       cameraPositionIOS: 0,
       cameraId: 1,
       cameraSwitchEnabled: true,
       isCloseButtonEnabled: true,
     };
+
     Alert.alert(
-      'Aler',
-      'Are you sure to open',
+      'Select option',
+      'chose one of the following',
       [
+        {
+          text: 'Open Gallery',
+          onPress: () =>
+            launchImageLibrary({includeBase64: true}, response => {
+              if (response.assets == undefined) return;
+              // console.log(response);
+              setPreview(true);
+              setImage(response.assets[0].base64);
+              image1.bitmap = response.assets[0].base64;
+              // setImg1({
+              //   uri: 'data:image/jpeg;base64,' + response.assets[0].base64,
+              // });
+              // console.log(img1);
+            }),
+        },
         {
           text: 'Yes Open Camera',
 
@@ -77,6 +104,7 @@ const Register = () => {
                   JSON.parse(result),
                 );
                 setImage(response.image.bitmap);
+                setPreview(true);
 
                 saveToGallery(response.image.bitmap);
               },
@@ -85,6 +113,7 @@ const Register = () => {
               },
             ),
         },
+        ,
       ],
       {cancelable: true},
     );
@@ -95,12 +124,24 @@ const Register = () => {
     try {
       image1.bitmap = base64;
       setImg1({uri: 'data:image/png;base64,' + base64});
-      obj[0].image_url = 'data:image/jpeg;base64,' + image1.bitmap;
-      obj[0].code = rollNo;
+      // objs[0].image_url = 'data:image/jpeg;base64,' + image1.bitmap;
+      // objs[0].section_id = section;
+      // objs[0].roll_no = rollNo;
+      // objs[0].name = name;
+      data.push({
+        name: name,
+        roll_no: rollNo,
+        section_id: section,
+        image: 'data:image/jpeg;base64,' + image1.bitmap,
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
+  // console.log(objs);
+  //
+  //
 
   const saveToGallery = async base64 => {
     if (base64) {
@@ -137,45 +178,47 @@ const Register = () => {
   };
 
   const handelSubmit = () => {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Content-Length': ['81992924'],
-      // Authorization: 'JWT fefege...',
-      'Access-Control-Allow-Origin': '*',
-    };
-    axios
-      .post('http://192.168.1.44:5000/store', obj, {
-        headers: headers,
-      })
-      .then(function (response) {
-        console.log('sent sucessfully', response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // console.log(data);
+
+    // return;
+    if (data[0] !== '') {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': ['81992924'],
+        // Authorization: 'JWT fefege...',
+        'Access-Control-Allow-Origin': '*',
+      };
+      axios
+        .post('http://192.168.1.44:5000/api/students', data, {
+          headers: headers,
+        })
+        .then(function (response) {
+          console.log('sent sucessfully', response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
+      alert('Some field are missing');
+    }
   };
-
   return (
-    <LinearGradient colors={['#e9b7ce', '#32c4c0', '#d3f3f1']}>
+    <LinearGradient colors={['#ddb4f6', '#8dd0fc']}>
       <View style={styles.container}>
-        <View>
-          <View>
-            {tempUri && (
-              <Image source={{uri: `file://${tempUri}`}} style={styles.image} />
-            )}
-          </View>
-        </View>
-
         <View
           style={{
+            // flex: 1,
+            // backgroundColor: 'green',
+            // height: '19%',
+            marginBottom: 20,
+            justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 0,
           }}>
           <Text
             style={{
-              fontSize: 35,
+              fontSize: 45,
               marginTop: 20,
-              marginBottom: 20,
+              marginBottom: 10,
               fontWeight: 'bold',
               color: 'black',
             }}>
@@ -192,106 +235,197 @@ const Register = () => {
             Complete below sections
           </Text>
         </View>
-
-        <View style={{}}>
-          <View
+        <View
+          style={{
+            // flex: 1,
+            // backgroundColor: 'yellow',
+            // height: '29%',
+            marginBottom: 20,
+            justifyContent: 'center',
+            padding: 5,
+          }}>
+          <Text
             style={{
-              justifyContent: 'flex-start',
-              padding: 10,
-              alignItems: 'center',
+              color: 'black',
+              fontSize: 16,
+              fontWeight: 'bold',
             }}>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: 20,
-                marginBottom: 10,
-                marginRight: 20,
-              }}>
-              Please Enter your Roll No:
-            </Text>
-            <TextInput
-              placeholder="Enter Your Roll no"
-              placeholderTextColor={'#ffffff'}
-              onChangeText={setRollNo}
-              keyboardType="numeric"
-              value={rollNo}
-              color={'white'}
-              style={{
-                borderWidth: 1,
-                borderRadius: 10,
-                width: '90%',
-                padding: 10,
-              }}
-            />
-          </View>
+            Select Section:
+          </Text>
+          <SelectDropdown
+            data={countries}
+            // defaultValueByIndex={1}
+            // defaultValue={'Egypt'}
+            onSelect={(selectedItem, index) => {
+              // console.log(selectedItem, index);
+              setSection(selectedItem);
+            }}
+            defaultButtonText={'Select Section'}
+            butt
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item;
+            }}
+            buttonStyle={styles.dropdown1BtnStyle}
+            buttonTextStyle={styles.dropdown1BtnTxtStyle}
+            // renderDropdownIcon={isOpened => {
+            //   return (
+            //     <FontAwesome
+            //       name={isOpened ? 'chevron-up' : 'chevron-down'}
+            //       color={'#444'}
+            //       size={18}
+            //     />
+            //   );
+            // }}
+            dropdownIconPosition={'right'}
+            dropdownStyle={styles.dropdown1DropdownStyle}
+            rowStyle={styles.dropdown1RowStyle}
+            rowTextStyle={styles.dropdown1RowTxtStyle}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 16,
+              fontWeight: 'bold',
+            }}>
+            Name:
+          </Text>
+          <TextInput
+            placeholder="Enter Your Name"
+            placeholderTextColor={'#8a817c'}
+            onChangeText={setName}
+            keyboardType="default"
+            activeUnderlineColor="green"
+            value={name}
+            style={{
+              borderBottomWidth: 1,
+              width: '100%',
+              alignSelf: 'center',
+              height: 40,
+              backgroundColor: 'white',
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 16,
+              fontWeight: 'bold',
+            }}>
+            Roll No:
+          </Text>
+          <TextInput
+            placeholder="Enter Your Roll no"
+            placeholderTextColor={'#8a817c'}
+            onChangeText={setRollNo}
+            keyboardType="numeric"
+            value={rollNo}
+            activeUnderlineColor="green"
+            // contentStyle={{backgroundColor: 'green'}}
+            // color={'#8a817c'}
+            style={{
+              borderBottomWidth: 1,
+              width: '100%',
+              alignSelf: 'center',
+              height: 40,
+              backgroundColor: 'white',
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            if (rollNo === '' || name === '' || section === '') {
+              alert('please fill above fields');
+            } else {
+              pickImage(true);
+            }
+          }}>
           <View
             style={{
+              // backgroundColor: 'green',
+              // flex: 1,
+              // height: '30%',
+              width: '100%',
+              marginBottom: 10,
+              borderWidth: 2,
+              borderStyle: 'dashed',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: 5,
             }}>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '80%',
-              }}>
-              <Text
+            {preview === false ? (
+              <View
                 style={{
-                  fontSize: 16,
-                  marginBottom: 30,
-                  fontWeight: 'bold',
-                  color: 'black',
+                  // flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: 30,
+                  marginBottom: 40,
                 }}>
-                Click below to capture
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  if (rollNo !== '') {
-                    OpenCamera(true);
-                  } else {
-                    Alert.alert('Warning', 'Please enter roll no');
-                  }
-                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (rollNo === '' || name === '' || section === '') {
+                      alert('please fill above fields');
+                    } else {
+                      pickImage(true);
+                    }
+                  }}>
+                  <Ionicons
+                    name="cloud-upload-outline"
+                    size={75}
+                    color="blue"
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                  }}>
+                  Click to Select / Capture
+                </Text>
+              </View>
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
                 <Image
                   style={{
-                    height: 250,
-                    width: 250,
+                    height: 200,
+                    width: 200,
                     resizeMode: 'center',
+                    // marginTop: 2,
                   }}
                   source={img1}
                   resizeMode="contain"
                 />
-              </TouchableOpacity>
-            </View>
+              </View>
+            )}
           </View>
-        </View>
-        <View style={{}}>
-          <View
+        </TouchableOpacity>
+        <View
+          style={{
+            // backgroundColor: 'orange',
+            height: '20%',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
             style={{
+              borderWidth: 1,
+              borderRadius: 5,
+              padding: 5,
+              backgroundColor: '#48cae4',
+              width: 250,
+              height: 40,
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 30,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              handelSubmit();
             }}>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                borderRadius: 20,
-                padding: 5,
-                backgroundColor: '#48cae4',
-                width: 150,
-                height: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={() => {
-                handelSubmit();
-              }}>
-              <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
-                Submit
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+              Submit
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </LinearGradient>
@@ -302,6 +436,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
+    padding: 10,
     // flex: 1,
     // justifyContent: 'center',
     // alignItems: 'center',
@@ -326,6 +461,40 @@ const styles = StyleSheet.create({
   image: {
     height: 50,
     width: 50,
+  },
+  dropdown1BtnStyle: {
+    // flex: 1,
+    height: 40,
+    width: '100%',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    // borderBottomColor: 'black',
+    borderColor: '#6c757d',
+    // justifyContent: 'flex-start',
+    // alignItems: 'flex-start',
+    // alignSelf: 'center',
+    borderRadius: 5,
+  },
+  dropdown1BtnTxtStyle: {
+    color: '#8a817c',
+    textAlign: 'auto',
+    // backgroundColor: 'green',
+    fontSize: 16,
+    // left: 15,
+  },
+  focus: {
+    borderBottomColor: 'blue',
+  },
+  dropdown1DropdownStyle: {
+    backgroundColor: 'green',
+  },
+  dropdown1RowStyle: {
+    backgroundColor: '#c6f8ff',
+    borderBottomColor: '#C5C5C5',
+  },
+  dropdown1RowTxtStyle: {
+    color: 'black',
+    textAlign: 'center',
   },
 });
 
