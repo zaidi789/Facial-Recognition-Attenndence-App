@@ -33,14 +33,14 @@ export default function Home() {
         }}
         colors={['#caefd7', '#f5bfd7', '#abc9e9']}>
         <Text style={styles.buttonHeadingText}>
-          If you want to compare images please click here!
+          Compare images please click here!
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Main')}>
           <LinearGradient
             style={{
               borderRadius: 50,
               borderWidth: 1,
-              marginBottom: 20,
+              marginBottom: 2,
               width: 200,
             }}
             colors={['#ede342', '#3b5998', '#ff51eb']}>
@@ -48,14 +48,14 @@ export default function Home() {
           </LinearGradient>
         </TouchableOpacity>
         <Text style={styles.buttonHeadingText}>
-          If you want to Make Attandence please click here!
+          Make Attandence please click here!
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Attandance')}>
           <LinearGradient
             style={{
               borderRadius: 50,
               borderWidth: 1,
-              marginBottom: 20,
+              marginBottom: 2,
               width: 200,
             }}
             colors={['#ede342', '#3b5998', '#ff51eb']}>
@@ -63,30 +63,48 @@ export default function Home() {
           </LinearGradient>
         </TouchableOpacity>
         <Text style={styles.buttonHeadingText}>
-          If you want to Register a Student please click here!
+          Register a Student please click here!
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <LinearGradient
             style={{
               borderRadius: 50,
               borderWidth: 1,
-              marginBottom: 20,
+              marginBottom: 2,
               width: 200,
             }}
             colors={['#ede342', '#3b5998', '#ff51eb']}>
             <Text style={styles.buttonText}>Register Student</Text>
           </LinearGradient>
         </TouchableOpacity>
+        <Text style={styles.buttonHeadingText}>
+          Crop Image please click here!
+        </Text>
         <TouchableOpacity onPress={() => navigation.navigate('CropImage')}>
           <LinearGradient
             style={{
               borderRadius: 50,
               borderWidth: 1,
-              marginBottom: 20,
+              // marginBottom: 20,
               width: 200,
             }}
             colors={['#ede342', '#3b5998', '#ff51eb']}>
             <Text style={styles.buttonText}>Crop Images</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <Text style={styles.buttonHeadingText}>
+          Section List please click here!
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Sections')}>
+          <LinearGradient
+            style={{
+              borderRadius: 50,
+              borderWidth: 1,
+              // marginBottom: 20,
+              width: 200,
+            }}
+            colors={['#ede342', '#3b5998', '#ff51eb']}>
+            <Text style={styles.buttonText}>Section List</Text>
           </LinearGradient>
         </TouchableOpacity>
       </LinearGradient>
