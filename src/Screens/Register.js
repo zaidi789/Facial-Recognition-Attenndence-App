@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,30 +7,22 @@ import {
   Alert,
   LogBox,
   TouchableOpacity,
-  NativeEventEmitter,
-  PermissionsAndroid,
   Platform,
-  RootTagContext,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 import FaceSDK, {
-  Enum,
-  RNFaceApi,
   FaceCaptureResponse,
-  LivenessResponse,
   MatchFacesImage,
 } from '@regulaforensics/react-native-face-api';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import RNFS from 'react-native-fs';
 import SelectDropdown from 'react-native-select-dropdown';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {TextInput} from 'react-native-paper';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
-// const eventManager = new NativeEventEmitter(RNFaceApi);
 
 var image1 = new MatchFacesImage();
 
@@ -82,14 +74,9 @@ const Register = () => {
           onPress: () =>
             launchImageLibrary({includeBase64: true}, response => {
               if (response.assets == undefined) return;
-              // console.log(response);
               setPreview(true);
               setImage(response.assets[0].base64);
               image1.bitmap = response.assets[0].base64;
-              // setImg1({
-              //   uri: 'data:image/jpeg;base64,' + response.assets[0].base64,
-              // });
-              // console.log(img1);
             }),
         },
         {
@@ -123,10 +110,6 @@ const Register = () => {
     try {
       image1.bitmap = base64;
       setImg1({uri: 'data:image/png;base64,' + base64});
-      // objs[0].image_url = 'data:image/jpeg;base64,' + image1.bitmap;
-      // objs[0].section_id = section;
-      // objs[0].roll_no = rollNo;
-      // objs[0].name = name;
       data.push({
         name: name,
         roll_no: rollNo,
@@ -137,11 +120,6 @@ const Register = () => {
       console.log(error);
     }
   };
-  ////////////////////////////////////////////////////
-
-  // console.log(objs);
-  //
-  //
 
   const saveToGallery = async base64 => {
     if (base64) {
@@ -254,10 +232,7 @@ const Register = () => {
           </Text>
           <SelectDropdown
             data={countries}
-            // defaultValueByIndex={1}
-            // defaultValue={'Egypt'}
             onSelect={(selectedItem, index) => {
-              // console.log(selectedItem, index);
               setSection(selectedItem);
             }}
             defaultButtonText={'Select Section'}
@@ -270,15 +245,6 @@ const Register = () => {
             }}
             buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            // renderDropdownIcon={isOpened => {
-            //   return (
-            //     <FontAwesome
-            //       name={isOpened ? 'chevron-up' : 'chevron-down'}
-            //       color={'#444'}
-            //       size={18}
-            //     />
-            //   );
-            // }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
             rowStyle={styles.dropdown1RowStyle}
@@ -322,8 +288,6 @@ const Register = () => {
             keyboardType="numeric"
             value={rollNo}
             activeUnderlineColor="green"
-            // contentStyle={{backgroundColor: 'green'}}
-            // color={'#8a817c'}
             style={{
               borderBottomWidth: 1,
               width: '100%',
@@ -343,9 +307,6 @@ const Register = () => {
           }}>
           <View
             style={{
-              // backgroundColor: 'green',
-              // flex: 1,
-              // height: '30%',
               width: '100%',
               marginBottom: 10,
               borderWidth: 2,
@@ -437,11 +398,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     padding: 10,
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // backgroundColor: '#ffafcc',
-    // marginBottom: 12,
   },
   welcome: {
     fontSize: 20,
@@ -468,19 +424,13 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'white',
     borderBottomWidth: 1,
-    // borderBottomColor: 'black',
     borderColor: '#6c757d',
-    // justifyContent: 'flex-start',
-    // alignItems: 'flex-start',
-    // alignSelf: 'center',
     borderRadius: 5,
   },
   dropdown1BtnTxtStyle: {
     color: '#8a817c',
     textAlign: 'auto',
-    // backgroundColor: 'green',
     fontSize: 16,
-    // left: 15,
   },
   focus: {
     borderBottomColor: 'blue',
