@@ -252,9 +252,9 @@ export default function SectionsDetails({route}) {
             fontSize: 25,
             color: 'black',
             fontWeight: 'bold',
-            marginBottom: 20,
+            marginBottom: 35,
           }}>
-          Students List Section-{JSON.stringify(sectionId)}
+          Students List Section-{sectionId}
         </Text>
         <View>
           <View
@@ -262,7 +262,6 @@ export default function SectionsDetails({route}) {
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
-              marginBottom: 10,
             }}>
             <View style={{width: '33%'}}>
               <Text style={styles.heading}> Roll_NO</Text>
@@ -315,6 +314,7 @@ export default function SectionsDetails({route}) {
                       width: 50,
                       justifyContent: 'center',
                       alignItems: 'center',
+                      // alignSelf: 'center',
                     }}
                     onPress={() => {
                       pickImage(index);
@@ -327,12 +327,14 @@ export default function SectionsDetails({route}) {
                       <FontAwesome name="camera" size={35} color="black" />
                     )}
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      pickImage(index);
-                    }}>
-                    <Text>Retake</Text>
-                  </TouchableOpacity>
+                  {item.avatar && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        pickImage(index);
+                      }}>
+                      <Text>Retake</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
@@ -369,20 +371,20 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
-  listView: {
-    backgroundColor: '#fdfffc',
-    padding: 5,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    height: 75,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowRadius: 2,
-    shadowOpacity: 12,
-    // borderRadius: 20,
-  },
+  // listView: {
+  //   backgroundColor: '#fdfffc',
+  //   padding: 5,
+  //   marginVertical: 5,
+  //   marginHorizontal: 5,
+  //   // height: 75,
+  //   shadowOffset: {
+  //     width: 0,
+  //     height: 3,
+  //   },
+  //   shadowRadius: 2,
+  //   shadowOpacity: 12,
+  //   // borderRadius: 20,
+  // },
   title: {},
   shadowProp: {
     shadowColor: '#171717',
@@ -397,7 +399,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   buttonContainerStyle: {
-    height: 75,
+    // height: 75,
     marginTop: 11,
     width: '100%',
     paddingLeft: 10,

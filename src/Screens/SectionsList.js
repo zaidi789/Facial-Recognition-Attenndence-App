@@ -80,7 +80,7 @@ export default function SectionsList() {
           height: '90%',
           width: '100%',
           backgroundColor: 'rgb(235,235,235)',
-          paddingTop: 20,
+          paddingTop: 10,
         }}>
         <FlatList
           data={DATA}
@@ -90,19 +90,21 @@ export default function SectionsList() {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Students Details', {
-                    sectionId: item.id,
+                    sectionId: item.title,
                   });
                 }}>
                 <View
                   style={{
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Text style={{fontSize: 25, color: 'black'}}>Section</Text>
-                  <Text style={{fontSize: 25, color: 'black', right: 20}}>
-                    {item.title}
+                  <Text style={{fontSize: 25, color: 'black'}}>
+                    Section-{item.title}
                   </Text>
+                  {/* <Text style={{fontSize: 25, color: 'black', right: 20}}>
+                    {item.title}
+                  </Text> */}
                 </View>
               </TouchableOpacity>
             </View>

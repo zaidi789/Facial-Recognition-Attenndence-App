@@ -28,25 +28,18 @@ import SelectDropdown from 'react-native-select-dropdown';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {TextInput} from 'react-native-paper';
+import ImageResizer from 'react-native-image-resizer';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
-// const eventManager = new NativeEventEmitter(RNFaceApi);
+const eventManager = new NativeEventEmitter(RNFaceApi);
 
 var image1 = new MatchFacesImage();
 
-const Register = () => {
-  const [img1, setImg1] = useState(require('../Images/ChrissEvans.jpg'));
-  const [rollNo, setRollNo] = useState('');
-  const [objs, setObjs] = useState([
-    {name: '', image_url: '', roll_no: '', section_id: ''},
-  ]);
-
-  const [name, setName] = useState('');
-  const [section, setSection] = useState('');
-  const [data, setData] = useState([]);
+const ImageCompression = () => {
+  const [img1, setImg1] = useState('');
   const [preview, setPreview] = useState(false);
 
-  const countries = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   useEffect(() => {
     const videoEncoderCompletionEvent = json => {
       const response = JSON.parse(json);
@@ -105,7 +98,7 @@ const Register = () => {
                 setImage(response.image.bitmap);
                 setPreview(true);
 
-                saveToGallery(response.image.bitmap);
+                // saveToGallery(response.image.bitmap);
               },
               e => {
                 console.log(e);
@@ -117,91 +110,180 @@ const Register = () => {
       {cancelable: true},
     );
   };
-  ///////////////////////////////////////////////////////
-  const setImage = base64 => {
-    if (base64 == null) return;
+
+  const setImage = async base64 => {
     try {
-      image1.bitmap = base64;
-      setImg1({uri: 'data:image/png;base64,' + base64});
-      // objs[0].image_url = 'data:image/jpeg;base64,' + image1.bitmap;
-      // objs[0].section_id = section;
-      // objs[0].roll_no = rollNo;
-      // objs[0].name = name;
-      data.push({
-        name: name,
-        roll_no: rollNo,
-        section_id: section,
-        image: 'data:image/jpeg;base64,' + image1.bitmap,
-      });
+      const compressedImage = await ImageResizer.createResizedImage(
+        `data:image/png;base64,${base64}`,
+        512, // desired width
+        512, // desired height
+        'JPEG',
+        80, // quality (0-100)
+      );
+      setImg1(compressedImage.uri);
+      console.log('--Compressed Image--', compressedImage.size);
+      const compressedBase64 = await convertToBase64(compressedImage.uri);
+      console.log('--Compressed Image--', compressedBase64);
+      // Use the compressed image base64 string as needed
     } catch (error) {
       console.log(error);
     }
   };
-  ////////////////////////////////////////////////////
 
-  // console.log(objs);
-  //
-  //
-
-  const saveToGallery = async base64 => {
-    if (base64) {
-      try {
-        const filePath = `${
-          RNFS.ExternalDirectoryPath
-        }/FaceAttendanceApp_${Date.now()}.png`;
-
-        await RNFS.writeFile(filePath, base64, 'base64');
-        saveImageToGallery(filePath);
-
-        Alert.alert('Success', 'Image saved to gallery.');
-      } catch (error) {
-        console.log('Error saving image to gallery:', error);
-        Alert.alert('Error', 'Failed to save image to gallery.');
-      }
-    }
-  };
-
-  const saveImageToGallery = async filePath => {
+  const convertToBase64 = async uri => {
     try {
-      if (Platform.OS === 'android') {
-        await RNFS.scanFile(filePath);
-        console.log('sucessfully saved image');
-      } else {
-        await RNFS.copyAssetsFileIOS(
-          filePath,
-          RNFS.LibraryDirectoryPath + filePath,
-        );
-      }
+      const fileContent = await RNFS.readFile(uri, 'base64');
+      return `data:image/jpeg;base64,${fileContent}`;
     } catch (error) {
-      console.log('Error saving image to gallery:', error);
+      console.log(error);
+      throw new Error('Failed to convert to base64');
     }
   };
 
-  const handelSubmit = async () => {
-    // console.log(data);
+  ////////////////////////////////////////////////////////
+  ////////////ERRRRRRROOOOOOOOOOOORRRRRRRR////////////
+  //   const setImage = async base64 => {
+  //     try {
+  //       const compressedImage = await ImageResizer.createResizedImage(
+  //         `data:image/png;base64,${base64}`,
+  //         800, // desired width
+  //         800, // desired height
+  //         'JPEG',
+  //         80, // quality (0-100)
+  //       );
 
-    // return;
-    if (data[0] !== '') {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Content-Length': ['81992924'],
-        // Authorization: 'JWT fefege...',
-        'Access-Control-Allow-Origin': '*',
-      };
-      await axios
-        .post('http://192.168.1.44:5000/api/students', data, {
-          headers: headers,
-        })
-        .then(function (response) {
-          console.log('sent sucessfully');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      alert('Some field are missing');
-    }
-  };
+  //       const compressedBase64 = await convertToBase64(compressedImage.uri);
+  //       console.log('--Compressed Image--', compressedBase64);
+  //       // Use the compressed image base64 string as needed
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   const convertToBase64 = uri => {
+  //     return new Promise((resolve, reject) => {
+  //       const xhr = new XMLHttpRequest();
+  //       xhr.onload = function () {
+  //         const base64 = xhr.responseText;
+  //         resolve(base64);
+  //       };
+  //       xhr.onerror = function () {
+  //         reject(new Error('Failed to convert to base64'));
+  //       };
+  //       xhr.open('GET', uri);
+  //       xhr.responseType = 'text';
+  //       xhr.send();
+  //     });
+  //   };
+  /////////////////////////////////////////////////
+  //   const setImage = async image => {
+  //     try {
+  //       const compressedImage = await ImageCropPicker.cleanSingle(image, {
+  //         compressImageMaxWidth: 800, // desired width
+  //         compressImageMaxHeight: 800, // desired height
+  //         compressImageQuality: 0.8, // Adjust the quality as desired (0-1)
+  //       });
+
+  //       console.log('--Compressed Image--', compressedImage);
+  //       // Access compressedImage.data for the base64 representation of the compressed image
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   const setImage = async base64 => {
+  //     if (base64 == null) return;
+  //     try {
+  //       const compressedImage = await ImageResizer.createResizedImage(
+  //         `data:image/png;base64,${base64}`,
+  //         800, // desired width
+  //         800, // desired height
+  //         'JPEG',
+  //         80, // quality (0-100)
+  //       );
+
+  //       const compressedBase64 = await ImageResizer.createResizedImage(
+  //         compressedImage.uri,
+  //         compressedImage.width,
+  //         compressedImage.height,
+  //         'JPEG',
+  //         80, // quality (0-100)
+  //         0, // rotation
+  //         undefined, // output path (optional)
+  //         'base64', // output format
+  //       );
+
+  //       console.log('--Compressed Image--', compressedBase64);
+  //       // Use the compressed image base64 string as needed (e.g., setImg1(compressedBase64))
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  /////////////////////////////////////////////////////////////////////////////
+  //   const setImage = async base64 => {
+  //     if (base64 == null) return;
+  //     try {
+  //       const compressedImage = await ImageResizer.createResizedImage(
+  //         `data:image/png;base64,${base64}`,
+  //         512, // desired width
+  //         512, // desired height
+  //         'JPEG',
+  //         80,
+  //          // quality (0-100)
+  //       );
+  //       setImg1(compressedImage.uri);
+
+  //       console.log('--Compressed Image--', compressedImage);
+  //       // Use the compressed image URI as needed (e.g., setImg1(compressedImage.uri))
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  // try {
+  //   image1.bitmap = base64;
+  //   setImg1({uri: 'data:image/png;base64,' + base64});
+  //   const result = await Image.compress(img1, {
+  //     compressionMethod: 'auto',
+  //   });
+  //   console.log('--Compressed Image--', result);
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  //   };
+
+  //   const saveToGallery = async base64 => {
+  //     if (base64) {
+  //       try {
+  //         const filePath = `${
+  //           RNFS.ExternalDirectoryPath
+  //         }/FaceAttendanceApp_${Date.now()}.png`;
+
+  //         await RNFS.writeFile(filePath, base64, 'base64');
+  //         saveImageToGallery(filePath);
+
+  //         Alert.alert('Success', 'Image saved to gallery.');
+  //       } catch (error) {
+  //         console.log('Error saving image to gallery:', error);
+  //         Alert.alert('Error', 'Failed to save image to gallery.');
+  //       }
+  //     }
+  //   };
+
+  //   const saveImageToGallery = async filePath => {
+  //     try {
+  //       if (Platform.OS === 'android') {
+  //         await RNFS.scanFile(filePath);
+  //         console.log('sucessfully saved image');
+  //       } else {
+  //         await RNFS.copyAssetsFileIOS(
+  //           filePath,
+  //           RNFS.LibraryDirectoryPath + filePath,
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.log('Error saving image to gallery:', error);
+  //     }
+  //   };
+
   return (
     <LinearGradient colors={['#ddb4f6', '#8dd0fc']}>
       <View style={styles.container}>
@@ -222,7 +304,7 @@ const Register = () => {
               fontWeight: 'bold',
               color: 'black',
             }}>
-            Register
+            Image Compression
           </Text>
           <Text
             style={{
@@ -235,117 +317,15 @@ const Register = () => {
             Complete below sections
           </Text>
         </View>
-        <View
-          style={{
-            // flex: 1,
-            // backgroundColor: 'yellow',
-            // height: '29%',
-            marginBottom: 20,
-            justifyContent: 'center',
-            padding: 5,
-          }}>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 16,
-              fontWeight: 'bold',
-            }}>
-            Select Section:
-          </Text>
-          <SelectDropdown
-            data={countries}
-            // defaultValueByIndex={1}
-            // defaultValue={'Egypt'}
-            onSelect={(selectedItem, index) => {
-              // console.log(selectedItem, index);
-              setSection(selectedItem);
-            }}
-            defaultButtonText={'Select Section'}
-            butt
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item;
-            }}
-            buttonStyle={styles.dropdown1BtnStyle}
-            buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            // renderDropdownIcon={isOpened => {
-            //   return (
-            //     <FontAwesome
-            //       name={isOpened ? 'chevron-up' : 'chevron-down'}
-            //       color={'#444'}
-            //       size={18}
-            //     />
-            //   );
-            // }}
-            dropdownIconPosition={'right'}
-            dropdownStyle={styles.dropdown1DropdownStyle}
-            rowStyle={styles.dropdown1RowStyle}
-            rowTextStyle={styles.dropdown1RowTxtStyle}
-          />
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 16,
-              fontWeight: 'bold',
-            }}>
-            Name:
-          </Text>
-          <TextInput
-            placeholder="Enter Your Name"
-            placeholderTextColor={'#8a817c'}
-            onChangeText={setName}
-            keyboardType="default"
-            activeUnderlineColor="green"
-            value={name}
-            style={{
-              borderBottomWidth: 1,
-              width: '100%',
-              alignSelf: 'center',
-              height: 40,
-              backgroundColor: 'white',
-            }}
-          />
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 16,
-              fontWeight: 'bold',
-            }}>
-            Roll No:
-          </Text>
-          <TextInput
-            placeholder="Enter Your Roll no"
-            placeholderTextColor={'#8a817c'}
-            onChangeText={setRollNo}
-            keyboardType="numeric"
-            value={rollNo}
-            activeUnderlineColor="green"
-            // contentStyle={{backgroundColor: 'green'}}
-            // color={'#8a817c'}
-            style={{
-              borderBottomWidth: 1,
-              width: '100%',
-              alignSelf: 'center',
-              height: 40,
-              backgroundColor: 'white',
-            }}
-          />
-        </View>
         <TouchableOpacity
           onPress={() => {
-            if (rollNo === '' || name === '' || section === '') {
-              alert('please fill above fields');
-            } else {
-              pickImage(true);
-            }
+            pickImage(true);
           }}>
           <View
             style={{
               // backgroundColor: 'green',
               // flex: 1,
-              // height: '30%',
+              height: '50%',
               width: '100%',
               marginBottom: 10,
               borderWidth: 2,
@@ -359,16 +339,13 @@ const Register = () => {
                   // flex: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  marginTop: 30,
+                  marginTop: 0,
                   marginBottom: 40,
+                  //   height: 250,
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    if (rollNo === '' || name === '' || section === '') {
-                      alert('please fill above fields');
-                    } else {
-                      pickImage(true);
-                    }
+                    pickImage(true);
                   }}>
                   <Ionicons
                     name="cloud-upload-outline"
@@ -394,7 +371,7 @@ const Register = () => {
                     resizeMode: 'center',
                     // marginTop: 2,
                   }}
-                  source={img1}
+                  source={{uri: img1}}
                   resizeMode="contain"
                 />
               </View>
@@ -419,9 +396,7 @@ const Register = () => {
               alignItems: 'center',
               marginTop: 10,
             }}
-            onPress={() => {
-              handelSubmit();
-            }}>
+            onPress={() => {}}>
             <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
               Submit
             </Text>
@@ -498,4 +473,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+export default ImageCompression;
