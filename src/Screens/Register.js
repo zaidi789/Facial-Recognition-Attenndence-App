@@ -419,7 +419,6 @@ const styles = StyleSheet.create({
     width: 50,
   },
   dropdown1BtnStyle: {
-    // flex: 1,
     height: 40,
     width: '100%',
     backgroundColor: 'white',
