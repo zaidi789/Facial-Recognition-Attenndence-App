@@ -25,7 +25,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 var image1 = new MatchFacesImage();
 const listId = uuid.v4();
-export default function SectionsDetails() {
+export default function SectionsDetails({route}) {
+  const {sectionId} = route.params;
   const [profileImage, setProfileImage] = useState('');
   const [data, setData] = useState([
     {
@@ -142,45 +143,59 @@ export default function SectionsDetails() {
   //     );
   //   };
   //   console.log;
-
   const setImage = (base64, idx) => {
     if (base64 == null) return;
-    // console.log(id);
     try {
-      image1.bitmap = base64;
       setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
-      //   if (data[idx]) {
-      //   console.log('the index is', idx);
-      //   return;
-      // setData[] profileImage;
-      //   setData(
-      //     [...data].map((obj, index) => {
-      //       if (index === idx) {
-      //         console.log('index matched', idx, obj.id, obj.name);
-      //         return {
-      //           ...obj,
-      //           avatar: {uri: 'data:image/jpeg;base64,' + base64},
-      //         };
-      //       } else {
-      //         console.log('idx not matched');
-      //       }
-      //     }),
-      //   );
-      const key = data.findIndex((item, index) => index === idx);
-      console.log('key is', key);
-      return (data[key] = {
-        ...data[key],
+      const updatedData = [...data];
+      updatedData[idx] = {
+        ...data[idx],
         avatar: {uri: 'data:image/jpeg;base64,' + base64},
-      });
-      //   return data[key];
-      //   console.log('idx avtar is', data[key]);
-      //   } else {
-      //     console.log('error occur');
-      //   }
+      };
+      setData(updatedData);
     } catch (error) {
       console.log(error);
     }
   };
+
+  // const setImage = (base64, idx) => {
+  //   if (base64 == null) return;
+  //   // console.log(id);
+  //   try {
+  //     image1.bitmap = base64;
+  //     setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
+  //     //   if (data[idx]) {
+  //     //   console.log('the index is', idx);
+  //     //   return;
+  //     // setData[] profileImage;
+  //     //   setData(
+  // [...data].map((obj, index) => {
+  //   if (index === idx) {
+  //     console.log('index matched', idx, obj.id, obj.name);
+  //     return {
+  //       ...obj,
+  //       avatar: {uri: 'data:image/jpeg;base64,' + base64},
+  //     };
+  //   } else {
+  //     console.log('idx not matched');
+  //   }
+  // }),
+  //     //   );
+  // const key = data.findIndex((item, index) => index === idx);
+  // console.log('key is', key);
+  // return (data[key] = {
+  //   ...data[key],
+  //   avatar: {uri: 'data:image/jpeg;base64,' + base64},
+  // });
+  //     //   return data[key];
+  //     //   console.log('idx avtar is', data[key]);
+  //     //   } else {
+  //     //     console.log('error occur');
+  //     //   }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   //   console.log('Profile image data is',);
 
   const DATA = [
@@ -234,12 +249,12 @@ export default function SectionsDetails() {
       <View style={styles.titleView}>
         <Text
           style={{
-            fontSize: 40,
+            fontSize: 25,
             color: 'black',
             fontWeight: 'bold',
-            marginBottom: 10,
+            marginBottom: 20,
           }}>
-          Students List
+          Students List Section-{JSON.stringify(sectionId)}
         </Text>
         <View>
           <View
@@ -247,17 +262,19 @@ export default function SectionsDetails() {
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
+              marginBottom: 10,
             }}>
-            <View style={{width: '25%'}}>
-              <Text style={styles.heading}>Name</Text>
-            </View>
-            <View style={{width: '25%'}}>
+            <View style={{width: '33%'}}>
               <Text style={styles.heading}> Roll_NO</Text>
             </View>
-            <View style={{width: '25%'}}>
-              <Text style={styles.heading}> Section</Text>
+            <View style={{width: '33%', left: 10}}>
+              <Text style={styles.heading}>Name</Text>
             </View>
-            <View style={{width: '25%', left: 10}}>
+
+            {/* <View style={{width: '25%'}}>
+              <Text style={styles.heading}> Section</Text>
+            </View> */}
+            <View style={{width: '33%', left: 40}}>
               <Text style={styles.heading}> Image</Text>
             </View>
           </View>
@@ -275,10 +292,15 @@ export default function SectionsDetails() {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  width: '100%',
                 }}>
-                <Text style={styles.title}>{item.name}</Text>
-                <Text style={styles.title}>{item.roll_no}</Text>
-                <Text style={styles.title}>{item.section}</Text>
+                <Text style={{fontSize: 18, color: 'black', left: 20}}>
+                  {item.roll_no}
+                </Text>
+
+                <Text style={{fontSize: 18, color: 'black'}}>{item.name}</Text>
+                {/* <Text style={styles.title}>{item.section}</Text> */}
+
                 <View
                   style={{
                     justifyContent: 'center',
@@ -361,10 +383,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 12,
     // borderRadius: 20,
   },
-  title: {
-    fontSize: 18,
-    color: 'black',
-  },
+  title: {},
   shadowProp: {
     shadowColor: '#171717',
     shadowOffset: {width: -2, height: 4},

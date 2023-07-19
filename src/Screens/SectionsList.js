@@ -11,81 +11,77 @@ export default function SectionsList() {
   const DATA = [
     {
       id: uuid.v4(),
-      title: 'One',
+      title: '1',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Two',
+      title: '2',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Three',
+      title: '3',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Four',
+      title: '4',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Five',
+      title: '5',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Six',
+      title: '6',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Seven',
+      title: '7',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Eight',
+      title: '8',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Nine',
+      title: '9',
       avatar: require('../Images/avatar.png'),
     },
     {
       id: uuid.v4(),
-      title: 'Ten',
+      title: '10',
       avatar: require('../Images/avatar.png'),
     },
   ];
 
   return (
-    <LinearGradient
-      colors={['#02c39a', '#02c39a']}
-      style={styles.linearGradient}>
-      <LinearGradient
+    <View style={styles.linearGradient}>
+      <View
         style={{
           height: '10%',
           width: '100%',
-          backgroundColor: 'green',
+          backgroundColor: 'rgb(235,235,235)',
           justifyContent: 'center',
           alignItems: 'center',
-        }}
-        colors={['#02c39a', '#02c39a', '#ffdab9']}>
-        <Text style={{fontSize: 40, color: 'black', fontWeight: 'bold'}}>
+        }}>
+        <Text style={{fontSize: 35, color: 'black', fontWeight: 'bold'}}>
           Sections List
         </Text>
-      </LinearGradient>
-      <LinearGradient
+      </View>
+      <View
         style={{
           height: '90%',
           width: '100%',
-          backgroundColor: 'green',
+          backgroundColor: 'rgb(235,235,235)',
           paddingTop: 20,
-        }}
-        colors={['#caefd7', '#f5bfd7', '#abc9e9']}>
+        }}>
         <FlatList
           data={DATA}
           keyExtractor={item => item.id}
@@ -93,7 +89,9 @@ export default function SectionsList() {
             <View style={styles.item}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Students Details');
+                  navigation.navigate('Students Details', {
+                    sectionId: item.id,
+                  });
                 }}>
                 <View
                   style={{
@@ -101,14 +99,17 @@ export default function SectionsList() {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}>
-                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={{fontSize: 25, color: 'black'}}>Section</Text>
+                  <Text style={{fontSize: 25, color: 'black', right: 20}}>
+                    {item.title}
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
           )}
         />
-      </LinearGradient>
-    </LinearGradient>
+      </View>
+    </View>
   );
 }
 
@@ -120,17 +121,26 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10,
     paddingBottom: 10,
+    backgroundColor: 'rgb(235,235,235)',
 
     // borderRadius: 5,
   },
   item: {
-    backgroundColor: '#72efdd',
-    padding: 10,
+    backgroundColor: '#fdfffc',
+    padding: 5,
     marginVertical: 5,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
+    height: 50,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 2,
+    shadowOpacity: 12,
+    // borderRadius: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 25,
     color: 'black',
   },
 });
