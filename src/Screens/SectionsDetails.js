@@ -22,11 +22,13 @@ import {useNavigation} from '@react-navigation/native';
 import {Avatar, Tooltip} from 'react-native-paper';
 import uuid from 'react-native-uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 var image1 = new MatchFacesImage();
 const listId = uuid.v4();
 export default function SectionsDetails({route}) {
   const {sectionId} = route.params;
+  const [sectionID, setSectionID] = useState(sectionId);
   const [profileImage, setProfileImage] = useState('');
   const [data, setData] = useState([
     {
@@ -65,6 +67,7 @@ export default function SectionsDetails({route}) {
       avatar: '',
     },
   ]);
+
   const navigation = useNavigation();
   useEffect(() => {
     const videoEncoderCompletionEvent = json => {
@@ -98,51 +101,11 @@ export default function SectionsDetails({route}) {
         );
         let img = response.image.bitmap;
         setImage(img, idx);
-        // ... check response.image.bitmap for capture result.
       },
       e => {},
     );
   };
 
-  //   const pickImage = idx => {s
-  //     // console.log(idx);
-  //     // setImage(profileImage, idx);
-  //     // return;
-  //     const config = {
-  //       cameraPositionIOS: 0,
-  //       cameraId: 1,
-  //       cameraSwitchEnabled: true,
-  //       isCloseButtonEnabled: true,
-  //     };
-
-  //     Alert.alert(
-  //       'Alert',
-  //       'Are you Sure',
-  //       [
-  //         {
-  //           text: 'Open Camera',
-
-  //           onPress: () =>
-  //             FaceSDK.presentFaceCaptureActivityWithConfig(
-  //               config,
-  //               result => {
-  //                 const response = FaceCaptureResponse.fromJson(
-  //                   JSON.parse(result),
-  //                 );
-  //                 let img = response.image.bitmap;
-  //                 setImage(img, idx);
-  //               },
-  //               e => {
-  //                 console.log(e);
-  //               },
-  //             ),
-  //         },
-  //         ,
-  //       ],
-  //       {cancelable: true},
-  //     );
-  //   };
-  //   console.log;
   const setImage = (base64, idx) => {
     if (base64 == null) return;
     try {
@@ -157,93 +120,6 @@ export default function SectionsDetails({route}) {
       console.log(error);
     }
   };
-
-  // const setImage = (base64, idx) => {
-  //   if (base64 == null) return;
-  //   // console.log(id);
-  //   try {
-  //     image1.bitmap = base64;
-  //     setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
-  //     //   if (data[idx]) {
-  //     //   console.log('the index is', idx);
-  //     //   return;
-  //     // setData[] profileImage;
-  //     //   setData(
-  // [...data].map((obj, index) => {
-  //   if (index === idx) {
-  //     console.log('index matched', idx, obj.id, obj.name);
-  //     return {
-  //       ...obj,
-  //       avatar: {uri: 'data:image/jpeg;base64,' + base64},
-  //     };
-  //   } else {
-  //     console.log('idx not matched');
-  //   }
-  // }),
-  //     //   );
-  // const key = data.findIndex((item, index) => index === idx);
-  // console.log('key is', key);
-  // return (data[key] = {
-  //   ...data[key],
-  //   avatar: {uri: 'data:image/jpeg;base64,' + base64},
-  // });
-  //     //   return data[key];
-  //     //   console.log('idx avtar is', data[key]);
-  //     //   } else {
-  //     //     console.log('error occur');
-  //     //   }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  //   console.log('Profile image data is',);
-
-  const DATA = [
-    {
-      id: uuid.v4(),
-      name: 'Sarah',
-      roll_no: 1,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Emma',
-      roll_no: 2,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Laura',
-      roll_no: 3,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Marie',
-      roll_no: 4,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Emily',
-      roll_no: 5,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Anna',
-      roll_no: 6,
-      section: 1,
-      avatar: '',
-    },
-  ];
-  //   console.log('--------------', data);
-  //   console.log('Avataar data is _____________', DATA[0].avatar);
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
@@ -254,7 +130,7 @@ export default function SectionsDetails({route}) {
             fontWeight: 'bold',
             marginBottom: 35,
           }}>
-          Students List Section-{sectionId}
+          Students List Section-{sectionID}
         </Text>
         <View>
           <View
@@ -270,9 +146,6 @@ export default function SectionsDetails({route}) {
               <Text style={styles.heading}>Name</Text>
             </View>
 
-            {/* <View style={{width: '25%'}}>
-              <Text style={styles.heading}> Section</Text>
-            </View> */}
             <View style={{width: '33%', left: 40}}>
               <Text style={styles.heading}> Image</Text>
             </View>
@@ -280,7 +153,6 @@ export default function SectionsDetails({route}) {
         </View>
       </View>
       <View style={styles.bodyView}>
-        {/* {console.log('data is ', data)} */}
         <FlatList
           data={data}
           keyExtractor={item => item.id}
@@ -298,7 +170,6 @@ export default function SectionsDetails({route}) {
                 </Text>
 
                 <Text style={{fontSize: 18, color: 'black'}}>{item.name}</Text>
-                {/* <Text style={styles.title}>{item.section}</Text> */}
 
                 <View
                   style={{
@@ -341,6 +212,45 @@ export default function SectionsDetails({route}) {
           )}
         />
       </View>
+      <View style={styles.bottomButtonView}>
+        <TouchableOpacity
+          style={styles.bottomButton}
+          onPress={() => {
+            if (sectionId == 1) {
+              navigation.navigate('Sections');
+            } else {
+              // setSectionID((sectionID -= 1));
+            }
+          }}>
+          <Ionicons name="arrow-back-circle-outline" size={20} color="black" />
+          <Text style={styles.bottomButtonText}> Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomButton}
+          // onPress={() => {
+          //   if (sectionId >= 1 && sectionId <= 10) {
+          //     console.log('here');
+          //     setSectionID((sectionID = sectionID + 1));
+          //     // navigation.navigate('Sections');
+          //   }
+          // }}
+        >
+          <Text style={styles.bottomButtonText}>Next </Text>
+          <Ionicons
+            name="arrow-forward-circle-outline"
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bottomButton}>
+          <Text style={styles.bottomButtonText}>Submit </Text>
+          <Ionicons
+            name="checkmark-done-circle-outline"
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -361,15 +271,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bodyView: {
-    height: '90%',
+    height: '80%',
     width: '100%',
     // backgroundColor: 'green',
     paddingTop: 1,
+  },
+  bottomButtonView: {
+    height: '10%',
+    // backgroundColor: 'yellow',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
   },
   heading: {
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
+  },
+  bottomButton: {
+    backgroundColor: 'rgb(235,235,235)',
+    width: 80,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 5,
+    flexDirection: 'row',
+  },
+  bottomButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'black',
   },
   // listView: {
   //   backgroundColor: '#fdfffc',
@@ -406,7 +338,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 3,
     paddingBottom: 3,
-    backgroundColor: 'white',
+    backgroundColor: '#fdfffc',
     borderWidth: Platform.OS === 'ios' ? 0.5 : 0,
     borderRadius: 2,
     borderColor:

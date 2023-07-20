@@ -1,10 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import CustomTextInput from '../components/CustomTextInput';
-
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import Reinput from 'reinput';
+import {useNavigation} from '@react-navigation/native';
 
 export default function Login() {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -13,18 +15,18 @@ export default function Login() {
         <Text style={styles.subHeading}>been missed!</Text>
       </View>
       <View style={styles.inputsView}>
-        <View
-          style={{
-            width: '100%',
-            marginBottom: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <CustomTextInput label={'email'} />
-        </View>
-        <View style={{width: '100%'}}>
-          <CustomTextInput label={'email'} />
-        </View>
+        <Reinput label="Email" onChangeText={setEmail} value={email} />
+        <Reinput
+          label="Password"
+          onChangeText={setPassword}
+          value={Password}
+          secureTextEntry={true}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Sections')}>
+          <Text style={styles.btnText}>SignIn</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -34,6 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgb(201,201,201)',
+    alignItems: 'center',
   },
   heading: {
     fontSize: 35,
@@ -49,14 +52,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 50,
+    marginBottom: 50,
   },
   inputsView: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: '80%',
+    // backgroundColor: 'green',
   },
   input: {
     width: '80%',
     borderRadius: 10,
     borderWidth: 1,
+  },
+  button: {
+    width: 280,
+    backgroundColor: '#ef340a',
+    height: 55,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  btnText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: '500',
   },
 });

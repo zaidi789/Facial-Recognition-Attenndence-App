@@ -1,8 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import {Avatar} from 'react-native-paper';
 import uuid from 'react-native-uuid';
 
 export default function SectionsList() {
@@ -102,9 +100,6 @@ export default function SectionsList() {
                   <Text style={{fontSize: 25, color: 'black'}}>
                     Section-{item.title}
                   </Text>
-                  {/* <Text style={{fontSize: 25, color: 'black', right: 20}}>
-                    {item.title}
-                  </Text> */}
                 </View>
               </TouchableOpacity>
             </View>

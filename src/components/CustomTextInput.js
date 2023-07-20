@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {TextInput} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function CustomTextInput({
   label,
@@ -10,6 +11,8 @@ export default function CustomTextInput({
   placeholder,
   onChangeText,
   value,
+  secureTextEntry,
+  labelStyle,
 }) {
   const [isFocused, setIsFocused] = useState('');
   // const [bodyWidth, setBodyWidth] = useState();
@@ -26,20 +29,32 @@ export default function CustomTextInput({
           setIsFocused(true);
           onFocus?.(event);
         }}
+        secureTextEntry={secureTextEntry}
+        placeholder={placeholder}
+        onChangeText={onChangeText}
       />
+
       <View
         style={[
           styles.labelContainer,
           {
-            top: isFocused ? -6 : 24,
+            top: isFocused ? -1.5 : 24,
+            backgroundColor: isFocused ? 'rgb(201,201,201)' : 'transparent',
+            left: isFocused ? 15 : 15,
           },
         ]}>
         <Text
           style={[
             styles.label,
             {
-              fontSize: isFocused ? 12 : 16,
-              color: isFocused ? '#080F9C' : '#B9C4CA',
+              fontSize: isFocused ? 16 : 20,
+              paddingLeft: isFocused ? 3 : 0,
+              paddingRight: isFocused ? 3 : 0,
+              // color: labelColor,
+
+              // padding: 2,
+              // color: isFocused ? 'black' : 'black',
+              color: isFocused ? 'black' : 'transparent',
             },
           ]}>
           {label}
@@ -50,27 +65,32 @@ export default function CustomTextInput({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  // container: {
+  //   flex: 1,
+  // },
   input: {
     padding: 15,
     fontFamily: 'Avenir-Medium',
     fontSize: 14,
-    color: 'white',
-    width: 220,
+    color: 'black',
+    width: 280,
     borderWidth: 1,
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
   },
   labelContainer: {
     position: 'absolute',
     left: 10,
-    top: -6,
-    paddingHorizontal: 8,
+    top: 0,
+    paddingHorizontal: 0,
     // backgroundColor: '#90e0ef',
   },
   label: {
     fontFamily: 'Avenir-Heavy',
-    fontSize: 12,
-    backgroundColor: 'transparent',
+    fontSize: 20,
+    color: 'white',
+    // backgroundColor: 'transparent',
   },
 });
