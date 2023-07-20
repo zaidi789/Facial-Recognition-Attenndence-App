@@ -36,7 +36,7 @@ export default function SectionsDetails({route}) {
       name: 'Sarah',
       roll_no: 1,
       section: 1,
-      avatar: profileImage,
+      avatar: '',
     },
     {
       id: uuid.v4(),

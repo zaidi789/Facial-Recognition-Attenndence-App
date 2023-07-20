@@ -1,11 +1,23 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import uuid from 'react-native-uuid';
-
+import Realm from 'realm';
 export default function SectionsList() {
   const navigation = useNavigation();
+  const [flatListItems, setFlatListItems] = useState([]);
   //   const listId = uuid.v4();
+
+  useEffect(() => {
+    const realm = new Realm({path: 'UserDatabase.realm'});
+    const user_details = realm.objects('user_details');
+    setFlatListItems(user_details);
+
+    return () => {
+      realm.close();
+    };
+  }, []);
+  // console.log()
   const DATA = [
     {
       id: uuid.v4(),
@@ -81,7 +93,7 @@ export default function SectionsList() {
           paddingTop: 10,
         }}>
         <FlatList
-          data={DATA}
+          data={flatListItems}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <View style={styles.item}>

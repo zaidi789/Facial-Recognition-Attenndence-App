@@ -1,9 +1,33 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-
+import React, {useEffect} from 'react';
+import Realm from 'realm';
 import Nav from './src/navigation';
 
 export default function App() {
+  const initializeRealm = () => {
+    return new Realm({
+      path: 'UserDatabase.realm',
+      schema: [
+        {
+          name: 'user_details',
+          properties: {
+            id: 'string',
+            name: 'string',
+            roll_no: 'string',
+            section: 'string',
+            image: 'string',
+          },
+        },
+      ],
+    });
+  };
+  useEffect(() => {
+    const realm = initializeRealm();
+
+    // You can use 'realm' here or store it in a state variable if needed
+    // Make sure to close the realm instance when the component is unmounted
+    return () => realm.close();
+  }, []);
   return <Nav />;
 }
 

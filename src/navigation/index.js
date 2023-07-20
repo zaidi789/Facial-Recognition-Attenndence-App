@@ -18,10 +18,11 @@ export default function Nav() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Main" component={Main} />
-        <Stack.Screen name="Register" component={Register} />
+
         <Stack.Screen name="Attandance" component={Attandance} />
         <Stack.Screen name="CropImage" component={CropImage} />
         <Stack.Screen name="Sections" component={SectionsList} />
