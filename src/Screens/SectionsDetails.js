@@ -95,9 +95,7 @@ export default function SectionsDetails({route}) {
     });
 
     setStudentDetails(studentsBySection);
-    return () => {
-      realm.close();
-    };
+
     const videoEncoderCompletionEvent = json => {
       const response = JSON.parse(json);
     };
@@ -112,13 +110,18 @@ export default function SectionsDetails({route}) {
       },
       e => {},
     );
+    return () => {
+      realm.close();
+    };
   }, []);
   // const addSection = () => {
   //   setSections([...sections, sectionID]);
   //   setSectionID(sectionID + 1); // Increment sectionID by one
   // };
 
-  const pickImage = idx => {
+  const pickImage = (roll, name, section) => {
+    // console.log(roll, name, section);
+    // return;
     const config = {
       cameraPositionIOS: 0,
       cameraId: 1,
@@ -132,54 +135,117 @@ export default function SectionsDetails({route}) {
           JSON.parse(faceCaptureResponse),
         );
         let img = response.image.bitmap;
-        setImage(img, idx);
+        setImage(img, roll, name, section);
       },
       e => {},
     );
   };
 
-  const setImage = (base64, idx) => {
+  const setImage = (base64, roll, name, section) => {
+    // console.log(section, roll, name);
+    // return;
     if (base64 == null) return;
     try {
       setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
-      const updatedData = [...data];
-      updatedData[idx] = {
-        ...data[idx],
-        avatar: {uri: 'data:image/jpeg;base64,' + base64},
+      // const updatedData = [...data];
+      // updatedData[idx] = {
+      //   ...data[idx],
+      //   avatar: {uri: 'data:image/jpeg;base64,' + base64},
+      // };
+      const updatedImageData = {
+        uri: 'data:image/jpeg;base64,' + base64,
       };
-      setData(updatedData);
+      update_user_image(section, roll, name, updatedImageData);
+      // setData(updatedData);
     } catch (error) {
       console.log(error);
     }
   };
-  const updateUser = () => {
+
+  const update_user_image = (section, roll_no, name, updatedImageData) => {
+    // Convert the image object to a base64-encoded string
+    const base64Image = updatedImageData.uri.split(',')[1];
+
     realm.write(() => {
-      var ID = input_user_id;
-      console.log('ID', ID);
-      var obj = realm
+      // Find the user with the given section, roll_no, and name
+      const user = realm
         .objects('user_details')
-        .filtered('user_id =' + input_user_id);
-      console.log('obj', obj);
-      if (obj.length > 0) {
-        obj[0].user_name = user_name;
-        obj[0].user_contact = user_contact;
-        obj[0].user_address = user_address;
+        .filtered(
+          'section = $0 AND roll_no = $1 AND name = $2',
+          section,
+          roll_no,
+          name,
+        )[0];
+
+      if (!user) {
+        alert('User not found');
+      } else {
+        // Update the user's image
+        realm.create(
+          'user_details',
+          {
+            id: user.id,
+            name: user.name,
+            roll_no: user.roll_no,
+            section: user.section,
+            image: 'data:image/jpeg;base64,' + base64Image, // Set the image as a base64-encoded string
+          },
+          true,
+        ); // Setting `true` for the third argument will update the existing user with the new values
+
         Alert.alert(
           'Success',
-          'User updated successfully',
+          'User image updated successfully',
           [
             {
               text: 'Ok',
-              // onPress: () => navigation.navigate('HomeScreen'),
+              // onPress: () => navigation.navigate('Log'),
             },
           ],
           {cancelable: false},
         );
-      } else {
-        alert('User Updation Failed');
       }
     });
   };
+
+  // const update_user_image = (name, roll_no, updatedImage) => {
+  //   realm.write(() => {
+  //     // Find the user with the given name and roll_no
+  //     const user = realm
+  //       .objects('user_details')
+  //       .filtered('name = $0 AND roll_no = $1', name, roll_no)[0];
+
+  //     if (!user) {
+  //       alert('User not found');
+  //     } else {
+  //       // Update the user's image
+  //       realm.create(
+  //         'user_details',
+  //         {
+  //           id: user.id,
+  //           name: user.name,
+  //           roll_no: user.roll_no,
+  //           section: user.section,
+  //           image: 'data:image/jpeg;base64,' + updatedImage,
+  //         },
+  //         true,
+  //       ); // Setting `true` for the third argument will update the existing user with the new values
+
+  //       Alert.alert(
+  //         'Success',
+  //         'User image updated successfully',
+  //         [
+  //           {
+  //             text: 'Ok',
+  //             // onPress: () => navigation.navigate('Log'),
+  //           },
+  //         ],
+  //         {cancelable: false},
+  //       );
+  //     }
+  //   });
+  // };
+
   // const updateCounter = () => {
   //   setCounter(counter++); // WRONG
   // };
@@ -250,13 +316,14 @@ export default function SectionsDetails({route}) {
                       // alignSelf: 'center',
                     }}
                     onPress={() => {
-                      pickImage(index);
+                      pickImage(item.roll_no, item.name, item.section);
                     }}>
-                    {item.avatar && (
-                      <Image source={item.avatar} style={styles.image} />
+                    {console.log(item.image)}
+                    {item.image && (
+                      <Image source={item.image} style={styles.image} />
                     )}
 
-                    {!item.avatar && (
+                    {!item.image && (
                       <FontAwesome name="camera" size={35} color="black" />
                     )}
                   </TouchableOpacity>
@@ -301,7 +368,9 @@ export default function SectionsDetails({route}) {
               // setSectionID(id => parseInt(id + 1));
               setSectionID(prevCounter => prevCounter + 1);
             }
-          }}>
+          }}
+          // disabled={length ? true : false}
+        >
           <Text style={styles.bottomButtonText}>Next </Text>
           <Ionicons
             name="arrow-forward-circle-outline"
