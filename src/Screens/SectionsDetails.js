@@ -23,13 +23,18 @@ import {Avatar, Tooltip} from 'react-native-paper';
 import uuid from 'react-native-uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Realm from 'realm';
+let realm;
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 var image1 = new MatchFacesImage();
 const listId = uuid.v4();
 export default function SectionsDetails({route}) {
-  const {sectionId} = route.params;
-  const [sectionID, setSectionID] = useState(sectionId);
+  const {sectionId, length} = route.params;
+  const [sectionID, setSectionID] = useState(parseInt(sectionId));
   const [profileImage, setProfileImage] = useState('');
+  const [sections, setSections] = useState([]);
+  const [studentDetails, setStudentDetails] = useState({});
+  const [flatListData, setFlatListData] = useState([]);
   const [data, setData] = useState([
     {
       id: uuid.v4(),
@@ -67,9 +72,32 @@ export default function SectionsDetails({route}) {
       avatar: '',
     },
   ]);
-
+  // console.log('length------------', length);
   const navigation = useNavigation();
+
+  // useEffect(() => {}, []);
+  // console.log(studentDetails[sectionId]);
+  const listData = [studentDetails[sectionID]];
+  // console.log(listData[0]);
   useEffect(() => {
+    realm = new Realm({path: 'UserDatabase.realm'});
+    const allSections = realm
+      .objects('user_details')
+      .sorted('section')
+      .map(section => section.section);
+    setSections(allSections);
+    const studentsBySection = {};
+    allSections.forEach(section => {
+      const studentsInSection = realm
+        .objects('user_details')
+        .filtered('section = $0', section);
+      studentsBySection[section] = studentsInSection;
+    });
+
+    setStudentDetails(studentsBySection);
+    return () => {
+      realm.close();
+    };
     const videoEncoderCompletionEvent = json => {
       const response = JSON.parse(json);
     };
@@ -85,6 +113,10 @@ export default function SectionsDetails({route}) {
       e => {},
     );
   }, []);
+  // const addSection = () => {
+  //   setSections([...sections, sectionID]);
+  //   setSectionID(sectionID + 1); // Increment sectionID by one
+  // };
 
   const pickImage = idx => {
     const config = {
@@ -120,6 +152,37 @@ export default function SectionsDetails({route}) {
       console.log(error);
     }
   };
+  const updateUser = () => {
+    realm.write(() => {
+      var ID = input_user_id;
+      console.log('ID', ID);
+      var obj = realm
+        .objects('user_details')
+        .filtered('user_id =' + input_user_id);
+      console.log('obj', obj);
+      if (obj.length > 0) {
+        obj[0].user_name = user_name;
+        obj[0].user_contact = user_contact;
+        obj[0].user_address = user_address;
+        Alert.alert(
+          'Success',
+          'User updated successfully',
+          [
+            {
+              text: 'Ok',
+              // onPress: () => navigation.navigate('HomeScreen'),
+            },
+          ],
+          {cancelable: false},
+        );
+      } else {
+        alert('User Updation Failed');
+      }
+    });
+  };
+  // const updateCounter = () => {
+  //   setCounter(counter++); // WRONG
+  // };
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
@@ -154,8 +217,7 @@ export default function SectionsDetails({route}) {
       </View>
       <View style={styles.bodyView}>
         <FlatList
-          data={data}
-          keyExtractor={item => item.id}
+          data={listData[0]}
           renderItem={({item, index}) => (
             <View style={styles.buttonContainerStyle}>
               <View
@@ -216,10 +278,13 @@ export default function SectionsDetails({route}) {
         <TouchableOpacity
           style={styles.bottomButton}
           onPress={() => {
-            if (sectionId == 1) {
+            // console.log('here', sectionID);
+            if (sectionID == 1) {
               navigation.navigate('Sections');
             } else {
-              // setSectionID((sectionID -= 1));
+              console.log('--------------');
+              // setSectionID(sectionID - 1);
+              setSectionID(id => id - 1);
             }
           }}>
           <Ionicons name="arrow-back-circle-outline" size={20} color="black" />
@@ -227,14 +292,16 @@ export default function SectionsDetails({route}) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomButton}
-          // onPress={() => {
-          //   if (sectionId >= 1 && sectionId <= 10) {
-          //     console.log('here');
-          //     setSectionID((sectionID = sectionID + 1));
-          //     // navigation.navigate('Sections');
-          //   }
-          // }}
-        >
+          onPress={() => {
+            // console.log('here', sectionID);
+            if (sectionID === 1 || sectionID < length) {
+              // setSectionID(sectionID + 1);
+              // addSection();
+              // setSectionID(parseInt(sectionID + 1));
+              // setSectionID(id => parseInt(id + 1));
+              setSectionID(prevCounter => prevCounter + 1);
+            }
+          }}>
           <Text style={styles.bottomButtonText}>Next </Text>
           <Ionicons
             name="arrow-forward-circle-outline"

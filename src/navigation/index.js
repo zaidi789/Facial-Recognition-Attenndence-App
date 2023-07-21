@@ -11,6 +11,7 @@ import SectionsList from '../Screens/SectionsList';
 import SectionsDetails from '../Screens/SectionsDetails';
 import Login from '../Screens/Login';
 import ImageCompression from '../Screens/ImageCompression';
+import StartScreen from '../Screens/StartScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,11 +19,11 @@ export default function Nav() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Register" component={Register} />
+        {/* <Stack.Screen name="Register" component={Register} /> */}
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Main" component={Main} />
-
+        <Stack.Screen name="StartScreen" component={StartScreen} />
         <Stack.Screen name="Attandance" component={Attandance} />
         <Stack.Screen name="CropImage" component={CropImage} />
         <Stack.Screen name="Sections" component={SectionsList} />

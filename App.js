@@ -10,6 +10,7 @@ export default function App() {
       schema: [
         {
           name: 'user_details',
+          primaryKey: 'id',
           properties: {
             id: 'string',
             name: 'string',
@@ -18,9 +19,18 @@ export default function App() {
             image: 'string',
           },
         },
+        {
+          name: 'section_details',
+          primaryKey: 'section',
+          properties: {
+            section: 'string', // Section name as primary key
+            students: {type: 'list', objectType: 'user_details'}, // List of students in the section
+          },
+        },
       ],
     });
   };
+
   useEffect(() => {
     const realm = initializeRealm();
 

@@ -475,67 +475,103 @@ export default function Register() {
   const [section, setSection] = useState('');
   const [image, setImage] = useState('');
   const [flatListItems, setFlatListItems] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [studentDetails, setStudentDetails] = useState({});
+
+  // const fetchStudentData = () => {
+  //   const allSections = realm
+  //     .objects('user_details')
+
+  //     .map(section => section.section);
+  //   // setSections(allSections);
+
+  //   const studentsBySection = {};
+  //   allSections.forEach(section => {
+  //     const studentsInSection = realm
+  //       .objects('user_details')
+  //       .filtered('section = $0', section);
+  //     studentsBySection[section] = studentsInSection;
+  //   });
+
+  //   setStudentDetails(studentsBySection);
+  // };
 
   useEffect(() => {
     realm = new Realm({path: 'UserDatabase.realm'});
-    const user_details = realm.objects('user_details');
-    setFlatListItems(user_details);
+    const allSections = realm
+      .objects('user_details')
+      .sorted('section')
+      .map(section => section.section);
+    setSections(allSections);
+    const studentsBySection = {};
+    allSections.forEach(section => {
+      const studentsInSection = realm
+        .objects('user_details')
+        .filtered('section = $0', section);
+      studentsBySection[section] = studentsInSection;
+    });
+
+    setStudentDetails(studentsBySection);
     return () => {
       realm.close();
     };
   }, []);
 
   const register_user = () => {
-    let id = uuid();
-    if (name) {
-      if (roll_no) {
-        if (section) {
-          realm.write(() => {
-            // Check if there is an existing record with the same section and ID
-            const existingRecord = realm
-              .objects('user_details')
-              .filtered('section = $0 AND id = $1', section, id);
-
-            if (existingRecord.length > 0) {
-              alert('A record with the same section and ID already exists.');
-            } else {
-              var ID =
-                realm.objects('user_details').sorted('id', true).length > 0
-                  ? realm.objects('user_details').sorted('id', true)[0]
-                      .user_id + 1
-                  : 1;
-              realm.create('user_details', {
-                id: id,
-                name: name,
-                roll_no: roll_no,
-                section: section,
-                image: image,
-              });
-              Alert.alert(
-                'Success',
-                'You are registered successfully',
-                [
-                  {
-                    text: 'Ok',
-                    // onPress: () => navigation.navigate('Log'),
-                  },
-                ],
-                {cancelable: false},
-              );
-            }
-          });
-        } else {
-          alert('Please fill Section');
-        }
-      } else {
-        alert('Please fill Roll No');
-      }
-    } else {
+    // Check if the required fields are filled
+    if (!name) {
       alert('Please fill Name');
+      return;
     }
+
+    if (!roll_no) {
+      alert('Please fill Roll No');
+      return;
+    }
+
+    if (!section) {
+      alert('Please fill Section');
+      return;
+    }
+
+    realm.write(() => {
+      // Check if there is an existing record with the same section and roll_no
+      const existingRecord = realm
+        .objects('user_details')
+        .filtered('section = $0 AND roll_no = $1', section, roll_no);
+
+      if (existingRecord.length > 0) {
+        alert(
+          'A student with the same Roll No already exists in the same section.',
+        );
+      } else {
+        var ID =
+          realm.objects('user_details').sorted('id', true).length > 0
+            ? realm.objects('user_details').sorted('id', true)[0].user_id + 1
+            : 1;
+        realm.create('user_details', {
+          id: uuid(), // Use UUID to create a unique ID for the student entry
+          name: name,
+          roll_no: roll_no,
+          section: section,
+          image: image,
+        });
+        Alert.alert(
+          'Success',
+          'You are registered successfully',
+          [
+            {
+              text: 'Ok',
+              // onPress: () => navigation.navigate('Log'),
+            },
+          ],
+          {cancelable: false},
+        );
+      }
+    });
   };
 
-  // console.log(flatListItems);
+  // console.log(studentDetails['2']);
   const handelRegister = () => {
     console.log('Name', name, 'Roll_No', rollno, 'Section', section);
     setName('');

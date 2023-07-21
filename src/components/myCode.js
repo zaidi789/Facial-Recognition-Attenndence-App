@@ -398,3 +398,209 @@ const ViewBySection = () => {
 };
 
 export default ViewBySection;
+
+
+const initializeRealm = () => {
+  return new Realm({
+    path: 'UserDatabase.realm',
+    schema: [
+      {
+        name: 'user_details',
+        primaryKey: 'id',
+        properties: {
+          id: 'string',
+          name: 'string',
+          roll_no: 'string',
+          section: 'string',
+          image: 'string',
+        },
+      },
+      {
+        name: 'section_details',
+        primaryKey: 'section',
+        properties: {
+          section: 'string', // Section name as primary key
+          students: { type: 'list', objectType: 'user_details' }, // List of students in the section
+        },
+      },
+    ],
+  });
+};
+
+
+// Step 1: Initialize Realm
+const realm = initializeRealm();
+
+// Step 2: Write student data
+realm.write(() => {
+  realm.create('user_details', {
+    id: '1',
+    name: 'John Doe',
+    roll_no: '101',
+    section: 'A',
+    image: '/path/to/john_doe.jpg',
+  });
+  
+  realm.create('user_details', {
+    id: '2',
+    name: 'Jane Smith',
+    roll_no: '102',
+    section: 'B',
+    image: '/path/to/jane_smith.jpg',
+  });
+});
+
+// Step 3: Write section data
+realm.write(() => {
+  realm.create('section_details', {
+    section: 'A',
+    students: [{ id: '1' }] // Linking the student with id '1' to section 'A'
+  });
+
+  realm.create('section_details', {
+    section: 'B',
+    students: [{ id: '2' }] // Linking the student with id '2' to section 'B'
+  });
+});
+
+
+
+
+
+
+
+
+
+const register_user = () => {
+  // Check if the required fields are filled
+  if (!name) {
+    alert('Please fill Name');
+    return;
+  }
+
+  if (!roll_no) {
+    alert('Please fill Roll No');
+    return;
+  }
+
+  if (!section) {
+    alert('Please fill Section');
+    return;
+  }
+
+  realm.write(() => {
+    // Check if there is an existing record with the same section and roll_no
+    const existingRecord = realm
+      .objects('user_details')
+      .filtered('section = $0 AND roll_no = $1', section, roll_no);
+
+    if (existingRecord.length > 0) {
+      alert('A student with the same Roll No already exists in the same section.');
+    } else {
+      var ID =
+        realm.objects('user_details').sorted('id', true).length > 0
+          ? realm.objects('user_details').sorted('id', true)[0].user_id + 1
+          : 1;
+      realm.create('user_details', {
+        id: uuid(), // Use UUID to create a unique ID for the student entry
+        name: name,
+        roll_no: roll_no,
+        section: section,
+        image: image,
+      });
+      Alert.alert(
+        'Success',
+        'You are registered successfully',
+        [
+          {
+            text: 'Ok',
+            // onPress: () => navigation.navigate('Log'),
+          },
+        ],
+        { cancelable: false },
+      );
+    }
+  });
+};
+
+
+
+
+const fetchStudentData = () => {
+  const allSections = realm.objects('section_details').map((section) => section.section);
+  setSections(allSections);
+
+  const studentsBySection = {};
+  allSections.forEach((section) => {
+    const studentsInSection = realm.objects('user_details').filtered('section = $0', section);
+    studentsBySection[section] = studentsInSection;
+  });
+
+  setStudentDetails(studentsBySection);
+};
+
+
+
+const register_user = () => {
+  // Check if the required fields are filled
+  if (!name) {
+    alert('Please fill Name');
+    return;
+  }
+
+  if (!roll_no) {
+    alert('Please fill Roll No');
+    return;
+  }
+
+  if (!section) {
+    alert('Please fill Section');
+    return;
+  }
+
+  realm.write(() => {
+    // Check if there is an existing record with the same section and roll_no
+    const existingRecord = realm
+      .objects('user_details')
+      .filtered('section = $0 AND roll_no = $1', section, roll_no);
+
+    if (existingRecord.length > 0) {
+      alert(
+        'A student with the same Roll No already exists in the same section.',
+      );
+    } else {
+      var ID =
+        realm.objects('user_details').sorted('id', true).length > 0
+          ? realm.objects('user_details').sorted('id', true)[0].user_id + 1
+          : 1;
+      realm.create('user_details', {
+        id: uuid(), // Use UUID to create a unique ID for the student entry
+        name: name,
+        roll_no: roll_no,
+        section: section,
+        image: image,
+      });
+
+      // Separate section numbers and student details into two arrays
+      const sectionsArray = realm.objects('user_details').sorted('section').map(user => user.section);
+      const studentsArray = realm.objects('user_details').sorted('name').map(user => ({
+        id: user.id,
+        name: user.name,
+        roll_no: user.roll_no,
+        image: user.image,
+      }));
+
+      Alert.alert(
+        'Success',
+        'You are registered successfully',
+        [
+          {
+            text: 'Ok',
+            // onPress: () => navigation.navigate('Log'),
+          },
+        ],
+        { cancelable: false },
+      );
+    }
+  });
+};

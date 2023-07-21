@@ -24,7 +24,7 @@ export default function Login() {
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Sections')}>
+          onPress={() => navigation.navigate('StartScreen')}>
           <Text style={styles.btnText}>SignIn</Text>
         </TouchableOpacity>
       </View>
