@@ -292,12 +292,14 @@ export default function SectionsDetails({route}) {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   width: '100%',
+                  // marginBottom: 1,
                 }}>
                 <Text style={{fontSize: 18, color: 'black', left: 20}}>
                   {item.roll_no}
                 </Text>
 
                 <Text style={{fontSize: 18, color: 'black'}}>{item.name}</Text>
+                {/* {console.log(item.image)} */}
 
                 <View
                   style={{
@@ -313,14 +315,12 @@ export default function SectionsDetails({route}) {
                       width: 50,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      // alignSelf: 'center',
                     }}
                     onPress={() => {
                       pickImage(item.roll_no, item.name, item.section);
                     }}>
-                    {console.log(item.image)}
                     {item.image && (
-                      <Image source={item.image} style={styles.image} />
+                      <Image source={{uri: item.image}} style={styles.image} />
                     )}
 
                     {!item.image && (
@@ -349,7 +349,7 @@ export default function SectionsDetails({route}) {
             if (sectionID == 1) {
               navigation.navigate('Sections');
             } else {
-              console.log('--------------');
+              // console.log('--------------');
               // setSectionID(sectionID - 1);
               setSectionID(id => id - 1);
             }
@@ -472,8 +472,10 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 10,
     paddingRight: 10,
+    // marginBottom: ,
     paddingTop: 3,
-    paddingBottom: 3,
+    paddingBottom: 5,
+
     backgroundColor: '#fdfffc',
     borderWidth: Platform.OS === 'ios' ? 0.5 : 0,
     borderRadius: 2,
@@ -490,5 +492,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.5,
 
     elevation: 2,
+    bottom: 8,
+    // top: 5,
   },
 });
