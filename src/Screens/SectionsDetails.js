@@ -11,30 +11,23 @@ import {
   Platform,
 } from 'react-native';
 import FaceSDK, {
-  Enum,
-  RNFaceApi,
   FaceCaptureResponse,
-  LivenessResponse,
   MatchFacesImage,
 } from '@regulaforensics/react-native-face-api';
-import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import {Avatar, Tooltip} from 'react-native-paper';
 import uuid from 'react-native-uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Realm from 'realm';
 let realm;
 LogBox.ignoreLogs(['new NativeEventEmitter']);
-var image1 = new MatchFacesImage();
-const listId = uuid.v4();
+
 export default function SectionsDetails({route}) {
   const {sectionId, length} = route.params;
   const [sectionID, setSectionID] = useState(parseInt(sectionId));
   const [profileImage, setProfileImage] = useState('');
   const [sections, setSections] = useState([]);
   const [studentDetails, setStudentDetails] = useState({});
-  const [flatListData, setFlatListData] = useState([]);
   const [data, setData] = useState([
     {
       id: uuid.v4(),
@@ -114,10 +107,6 @@ export default function SectionsDetails({route}) {
       realm.close();
     };
   }, []);
-  // const addSection = () => {
-  //   setSections([...sections, sectionID]);
-  //   setSectionID(sectionID + 1); // Increment sectionID by one
-  // };
 
   const pickImage = (roll, name, section) => {
     // console.log(roll, name, section);
@@ -155,6 +144,7 @@ export default function SectionsDetails({route}) {
       const updatedImageData = {
         uri: 'data:image/jpeg;base64,' + base64,
       };
+      // updateUser(section, roll, name, updatedImageData);
       update_user_image(section, roll, name, updatedImageData);
       // setData(updatedData);
     } catch (error) {
@@ -208,47 +198,6 @@ export default function SectionsDetails({route}) {
     });
   };
 
-  // const update_user_image = (name, roll_no, updatedImage) => {
-  //   realm.write(() => {
-  //     // Find the user with the given name and roll_no
-  //     const user = realm
-  //       .objects('user_details')
-  //       .filtered('name = $0 AND roll_no = $1', name, roll_no)[0];
-
-  //     if (!user) {
-  //       alert('User not found');
-  //     } else {
-  //       // Update the user's image
-  //       realm.create(
-  //         'user_details',
-  //         {
-  //           id: user.id,
-  //           name: user.name,
-  //           roll_no: user.roll_no,
-  //           section: user.section,
-  //           image: 'data:image/jpeg;base64,' + updatedImage,
-  //         },
-  //         true,
-  //       ); // Setting `true` for the third argument will update the existing user with the new values
-
-  //       Alert.alert(
-  //         'Success',
-  //         'User image updated successfully',
-  //         [
-  //           {
-  //             text: 'Ok',
-  //             // onPress: () => navigation.navigate('Log'),
-  //           },
-  //         ],
-  //         {cancelable: false},
-  //       );
-  //     }
-  //   });
-  // };
-
-  // const updateCounter = () => {
-  //   setCounter(counter++); // WRONG
-  // };
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
@@ -257,7 +206,8 @@ export default function SectionsDetails({route}) {
             fontSize: 25,
             color: 'black',
             fontWeight: 'bold',
-            marginBottom: 35,
+            marginBottom: 20,
+            // backgroundColor: 'green',
           }}>
           Students List Section-{sectionID}
         </Text>
@@ -284,6 +234,7 @@ export default function SectionsDetails({route}) {
       <View style={styles.bodyView}>
         <FlatList
           data={listData[0]}
+          keyExtractor={item => item.roll_no}
           renderItem={({item, index}) => (
             <View style={styles.buttonContainerStyle}>
               <View
@@ -292,15 +243,11 @@ export default function SectionsDetails({route}) {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   width: '100%',
-                  // marginBottom: 1,
                 }}>
                 <Text style={{fontSize: 18, color: 'black', left: 20}}>
                   {item.roll_no}
                 </Text>
-
                 <Text style={{fontSize: 18, color: 'black'}}>{item.name}</Text>
-                {/* {console.log(item.image)} */}
-
                 <View
                   style={{
                     justifyContent: 'center',
@@ -467,22 +414,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   buttonContainerStyle: {
-    // height: 75,
     marginTop: 11,
     width: '100%',
     paddingLeft: 10,
     paddingRight: 10,
-    // marginBottom: ,
     paddingTop: 3,
     paddingBottom: 5,
-
     backgroundColor: '#fdfffc',
     borderWidth: Platform.OS === 'ios' ? 0.5 : 0,
     borderRadius: 2,
     borderColor:
       Platform.OS === 'ios' ? 'rgb(225, 225, 225)' : 'rgba(0,0,0,.0)',
-
-    // shadow
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -490,7 +432,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 2.5,
-
     elevation: 2,
     bottom: 8,
     // top: 5,

@@ -2,6 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import Reinput from 'reinput';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -15,12 +16,19 @@ export default function Login() {
         <Text style={styles.subHeading}>been missed!</Text>
       </View>
       <View style={styles.inputsView}>
-        <Reinput label="Email" onChangeText={setEmail} value={email} />
+        <Reinput
+          label="Email"
+          onChangeText={setEmail}
+          value={email}
+          // iconOverlay={<Icon name="eye" size={25} />}
+        />
         <Reinput
           label="Password"
           onChangeText={setPassword}
           value={Password}
           secureTextEntry={true}
+          // iconOverlay={<Icon name="eye" size={25} />}
+          // icon={<Icon name="eye" size={25} />}
         />
         <TouchableOpacity
           style={styles.button}
