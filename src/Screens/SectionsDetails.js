@@ -71,7 +71,7 @@ export default function SectionsDetails({route}) {
   // useEffect(() => {}, []);
   // console.log(studentDetails[sectionId]);
   const listData = [studentDetails[sectionID]];
-  // console.log(listData[0]);
+  console.log(listData[0]);
   useEffect(() => {
     realm = new Realm({path: 'UserDatabase.realm'});
     const allSections = realm
@@ -88,11 +88,6 @@ export default function SectionsDetails({route}) {
     });
 
     setStudentDetails(studentsBySection);
-
-    const videoEncoderCompletionEvent = json => {
-      const response = JSON.parse(json);
-    };
-
     FaceSDK.init(
       json => {
         const response = JSON.parse(json);

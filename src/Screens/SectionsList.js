@@ -2,7 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import uuid from 'react-native-uuid';
+import CountDown from 'react-native-countdown-component';
+import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
+import moment from 'moment';
 import Realm from 'realm';
+import CustomTimer from '../components/Timer';
 let realm;
 export default function SectionsList() {
   const navigation = useNavigation();
@@ -11,6 +15,11 @@ export default function SectionsList() {
   // const [secLength, setSecLenght] = useState('');
   const [studentDetails, setStudentDetails] = useState({});
   const [flatListData, setFlatListData] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleToggleTimer = () => {
+    setIsPlaying(prevState => !prevState);
+  };
 
   useEffect(() => {
     realm = new Realm({path: 'UserDatabase.realm'});
@@ -92,15 +101,35 @@ export default function SectionsList() {
     <View style={styles.linearGradient}>
       <View
         style={{
-          height: '10%',
-          width: '100%',
+          // height: '10%',
+          // width: '100%',
           backgroundColor: 'rgb(235,235,235)',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           alignItems: 'center',
+          flexDirection: 'row',
         }}>
-        <Text style={{fontSize: 35, color: 'black', fontWeight: 'bold'}}>
+        <Text
+          style={{
+            fontSize: 30,
+            color: 'black',
+            fontWeight: 'bold',
+            left: 10,
+            bottom: 7,
+          }}>
           Sections List
         </Text>
+        {/* <CountDown
+          until={80000}
+          onFinish={() => alert('finished')}
+          onPress={() => alert('hello')}
+          size={15}
+          timeToShow={['H', 'M', 'S']}
+          digitTxtStyle={{color: '#1CC625'}}
+          digitStyle={{backgroundColor: '#FFF'}}
+          showSeparator
+          separatorStyle={{color: '#1CC625'}}
+        /> */}
+        {/* <CustomTimer /> */}
       </View>
       <View
         style={{

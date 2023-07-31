@@ -7,15 +7,103 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  TextInput,
 } from 'react-native';
+import base64 from 'react-native-base64';
 import {useNavigation} from '@react-navigation/native';
-import {v4 as uuid} from 'uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {TextInput} from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Realm from 'realm';
 let realm;
 export default function Register() {
   const navigation = useNavigation();
+  const [base64String, setBase64String] = useState('');
+  const [decodedArray, setDecodedArray] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    const decodedString = base64.decode(base64String);
+    const dataArray = decodedString.split(',');
+    setDecodedArray(dataArray);
+  }, [base64String]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+  const handleClearText = () => {
+    setBase64String('');
+  };
+
+  // useEffect(() => {
+  //   if (base64String) {
+  //     try {
+  //       // Decode the Base64 string and split it into an array
+  //       const decodedString = decode(base64String);
+  //       const dataArray = decodedString.split(',');
+  //       setDecodedArray(dataArray);
+  //       setIsButtonDisabled(false); // Enable the button after successful decoding
+  //     } catch (error) {
+  //       // Handle any errors that might occur during decoding
+  //       setDecodedArray([]);
+  //       setIsButtonDisabled(true); // Disable the button if decoding fails
+  //     }
+  //   } else {
+  //     setDecodedArray([]);
+  //     setIsButtonDisabled(true); // Disable the button when the TextInput is empty
+  //   }
+  // }, [base64String]);
+  // console.log(sections);
+  // const handelStart = () => {
+  //   const string = base64.decode(inputString);
+  //   const dataArray = string.split(',');
+  //   setSections(dataArray);
+  //   Alert.alert(dataArray);
+  // };
+  const handleDecode = () => {
+    // console.log('here--------');
+    try {
+      // Decode the Base64 string
+      // console.log('here--------');
+      const decodedString = base64.decode(base64String);
+      const dataArray = decodedString.split(',');
+      setDecodedArray(dataArray);
+      console.log('here--------', decodedArray);
+      alert(decodedArray);
+      return;
+      // Check if the decoded string contains only comma-separated numbers
+      const isValidFormat = dataArray => {
+        return /^(\d+,)*\d+$/.test(dataArray.trim());
+      };
+
+      if (isValidFormat) {
+        setDecodedArray(decodedString.trim());
+        console.log('data is ', decodedArray);
+        setIsButtonDisabled(false); // Enable the button after decoding is successful
+      } else {
+        setDecodedArray([]);
+        setIsButtonDisabled(true); // Disable the button if the string is not in the correct format
+        Alert.alert(
+          'Error',
+          'Invalid string format. Please provide a comma-separated list of numbers.',
+        );
+      }
+    } catch (error) {
+      // Handle any other errors that might occur during decoding
+      // setDecodedArray([]);
+      // setIsButtonDisabled(true);
+      // Alert.alert('Error', 'Invalid Base64 string');
+    }
+  };
+
+  const handleInputChange = text => {
+    setBase64String(text);
+    setIsButtonDisabled(false); // Disable the button whenever the input changes
+  };
 
   return (
     <View style={styles.linearGradient}>
@@ -34,17 +122,36 @@ export default function Register() {
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Image
           source={require('../Images/background-person.png')}
-          style={{height: 400, width: 400}}
+          style={{height: 300, width: 300}}
         />
       </View>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{marginTop: 20, marginBottom: 30, fontSize: 12}}>
-          Human face recognition systems use unique mathematical patterns to
-          store biometric data. Hence, they are among the safest and most
-          effective identification methods in biometric technology. Facial data
-          can be anonymized and kept private to reduce the risk of unauthorized
-          access.
-        </Text>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingLeft: 30,
+          paddingRight: 30,
+          marginTop: 0,
+        }}>
+        <View style={[styles.inputContainer, isFocused && styles.inputFocused]}>
+          <TextInput
+            style={styles.input}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder="Enter text here"
+            onChangeText={handleInputChange}
+            value={base64String}
+            // editable={false}
+          />
+          {base64String !== '' && (
+            <TouchableOpacity
+              onPress={handleClearText}
+              style={styles.clearButton}>
+              <Ionicons name="md-close" size={28} color="red" />
+            </TouchableOpacity>
+          )}
+        </View>
+
         <TouchableOpacity
           style={{
             flexDirection: 'row',
@@ -52,11 +159,16 @@ export default function Register() {
             alignItems: 'center',
             borderWidth: 1,
             borderRadius: 10,
+            marginTop: 10,
             height: 50,
             width: 200,
-            backgroundColor: '#e63946',
+            backgroundColor: !isButtonDisabled ? '#e63946' : '#e0e1dd',
           }}
-          onPress={() => navigation.navigate('Sections')}>
+          disabled={isButtonDisabled}
+          onPress={() => {
+            // handleDecode();
+            navigation.navigate('DetailsShow');
+          }}>
           <Text style={{color: 'white', fontSize: 22, fontWeight: '600'}}>
             Start
           </Text>
@@ -84,47 +196,28 @@ const styles = StyleSheet.create({
 
     // borderRadius: 5,
   },
-  item: {
-    backgroundColor: '#fdfffc',
+  inputContainer: {
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    // paddingVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
     padding: 5,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    height: 50,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowRadius: 2,
-    shadowOpacity: 12,
-    // borderRadius: 20,
+    width: 300,
+    borderRadius: 10,
+    marginBottom: 10,
   },
-  title: {
-    fontSize: 25,
-    color: 'black',
+  inputFocused: {
+    borderColor: 'blue', // Change the border color when focused
   },
-  buttonContainerStyle: {
-    // height: 75,
-    marginTop: 11,
-    width: '100%',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 3,
-    paddingBottom: 3,
-    backgroundColor: '#fdfffc',
-    borderWidth: Platform.OS === 'ios' ? 0.5 : 0,
-    borderRadius: 2,
-    borderColor:
-      Platform.OS === 'ios' ? 'rgb(225, 225, 225)' : 'rgba(0,0,0,.0)',
-
-    // shadow
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 2.5,
-
-    elevation: 2,
+  input: {
+    fontSize: 16,
+    flex: 1,
+  },
+  clearButton: {
+    padding: 1,
+    borderWidth: 1,
+    borderRadius: 50,
   },
 });

@@ -15,6 +15,8 @@ import StartScreen from '../Screens/StartScreen';
 import {View, Image, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entery from '../Screens/Entery';
+import DetailsShow from '../Screens/DetailsShow';
 
 const Stack = createNativeStackNavigator();
 function HeaderLeft({navigation}) {
@@ -83,6 +85,7 @@ export default function Nav() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Entery" component={Entery} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen
           name="Login"
@@ -96,34 +99,17 @@ export default function Nav() {
         />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Main" component={Main} />
-        <Stack.Screen
-          name="StartScreen"
-          component={StartScreen}
-          // options={({navigation}) => {
-          //   return {
-          //     // headerLeft: () => <HeaderLeft navigation={navigation} />,
-          //     headerTitle: () => <HeaderTitleStart navigation={navigation} />,
-          //   };
-          // }}
-        />
+        <Stack.Screen name="StartScreen" component={StartScreen} />
         <Stack.Screen name="Attandance" component={Attandance} />
         <Stack.Screen name="CropImage" component={CropImage} />
-        <Stack.Screen
-          name="Sections"
-          component={SectionsList}
-          // options={({navigation}) => {
-          //   return {
-          //     // headerLeft: () => <HeaderLeft navigation={navigation} />,
-          //     headerTitle: () => <HeaderTitleSection navigation={navigation} />,
-          //   };
-          // }}
-        />
+        <Stack.Screen name="Sections" component={SectionsList} />
         <Stack.Screen
           name="Students Details"
           component={SectionsDetails}
           options={{headerShown: false}}
         />
         <Stack.Screen name="CompressImage" component={ImageCompression} />
+        <Stack.Screen name="DetailsShow" component={DetailsShow} />
       </Stack.Navigator>
     </NavigationContainer>
   );

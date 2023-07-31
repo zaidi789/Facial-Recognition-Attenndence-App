@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Alert} from 'react-native';
 import React, {useState} from 'react';
 import Reinput from 'reinput';
 import {useNavigation} from '@react-navigation/native';
@@ -32,7 +32,9 @@ export default function Login() {
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('StartScreen')}>
+          onPress={() => {
+            navigation.navigate('StartScreen');
+          }}>
           <Text style={styles.btnText}>SignIn</Text>
         </TouchableOpacity>
       </View>
