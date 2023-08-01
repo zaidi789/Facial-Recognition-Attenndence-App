@@ -17,6 +17,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entery from '../Screens/Entery';
 import DetailsShow from '../Screens/DetailsShow';
+import ClassList from '../Screens/ClassList';
+import DataEntryPage from '../Screens/DataEntry';
 
 const Stack = createNativeStackNavigator();
 function HeaderLeft({navigation}) {
@@ -85,6 +87,11 @@ export default function Nav() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        {/* <Stack.Screen name="DataEntryPage" component={DataEntryPage} /> */}
+
+        {/* <Stack.Screen name="Main" component={Main} /> */}
+
+        <Stack.Screen name="ClassList" component={ClassList} />
         <Stack.Screen name="Entery" component={Entery} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen
@@ -98,7 +105,6 @@ export default function Nav() {
           // }}
         />
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Main" component={Main} />
         <Stack.Screen name="StartScreen" component={StartScreen} />
         <Stack.Screen name="Attandance" component={Attandance} />
         <Stack.Screen name="CropImage" component={CropImage} />

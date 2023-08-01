@@ -65,7 +65,7 @@ export default function DetailsShow() {
                   },
                   {
                     text: 'Yes',
-                    onPress: () => navigation.navigate('Sections'),
+                    onPress: () => navigation.navigate('ClassList'),
                   },
                 ],
               );

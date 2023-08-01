@@ -8,8 +8,10 @@ import moment from 'moment';
 import Realm from 'realm';
 import CustomTimer from '../components/Timer';
 let realm;
-export default function SectionsList() {
+export default function SectionsList({route}) {
   const navigation = useNavigation();
+  const {ClassId} = route.params;
+  const [classID, setClassID] = useState(parseInt(ClassId));
   const [flatListItems, setFlatListItems] = useState([]);
   const [sections, setSections] = useState([]);
   // const [secLength, setSecLenght] = useState('');
@@ -17,33 +19,48 @@ export default function SectionsList() {
   const [flatListData, setFlatListData] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handleToggleTimer = () => {
-    setIsPlaying(prevState => !prevState);
-  };
+  // useEffect(() => {
+  //   realm = new Realm({path: 'UserDatabase.realm'});
+  //   const allSections = realm
+  //     .objects('user_details')
+  //     .sorted('section')
+  //     .map(section => section.section);
+  //   setSections(allSections);
+  //   const studentsBySection = {};
+  //   allSections.forEach(section => {
+  //     const studentsInSection = realm
+  //       .objects('user_details')
+  //       .filtered('section = $0', section);
+  //     studentsBySection[section] = studentsInSection;
+  //   });
+
+  //   setStudentDetails(studentsBySection);
+  //   return () => {
+  //     realm.close();
+  //   };
+  // }, []);
 
   useEffect(() => {
-    realm = new Realm({path: 'UserDatabase.realm'});
-    const allSections = realm
-      .objects('user_details')
-      .sorted('section')
-      .map(section => section.section);
-    setSections(allSections);
-    const studentsBySection = {};
-    allSections.forEach(section => {
-      const studentsInSection = realm
-        .objects('user_details')
-        .filtered('section = $0', section);
-      studentsBySection[section] = studentsInSection;
-    });
+    const realm = initializeRealm();
 
-    setStudentDetails(studentsBySection);
-    return () => {
-      realm.close();
-    };
-  }, []);
+    // Get all sections of the selected class from the 'Student' table
+    const sectionsOfClass = realm
+      .objects('Student')
+      .filtered('class = $0', ClassId)
+      .sorted('section')
+      .map(student => student.section);
+
+    // Filter out duplicates and update the state with the sections list
+    const uniqueSections = [...new Set(sectionsOfClass)];
+    setSections(uniqueSections);
+
+    // Close the Realm instance
+    realm.close();
+  }, [ClassId]);
+
   const uniqueSections = [...new Set(sections)];
   const secLength = uniqueSections.length;
-  // console.log('Length is', secLength);
+  // console.log('Length is', ClassId);
   // const DATA = [
   //   {
   //     id: uuid.v4(),
@@ -118,18 +135,6 @@ export default function SectionsList() {
           }}>
           Sections List
         </Text>
-        {/* <CountDown
-          until={80000}
-          onFinish={() => alert('finished')}
-          onPress={() => alert('hello')}
-          size={15}
-          timeToShow={['H', 'M', 'S']}
-          digitTxtStyle={{color: '#1CC625'}}
-          digitStyle={{backgroundColor: '#FFF'}}
-          showSeparator
-          separatorStyle={{color: '#1CC625'}}
-        /> */}
-        {/* <CustomTimer /> */}
       </View>
       <View
         style={{
@@ -146,9 +151,10 @@ export default function SectionsList() {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Students Details', {
-                    sectionId: item,
-                    length: secLength,
+                    section: item,
+                    classId: ClassId,
                   });
+                  // console.log(section, classId);
                 }}>
                 <View
                   style={{

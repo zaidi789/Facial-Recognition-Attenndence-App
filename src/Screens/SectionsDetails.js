@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import FaceSDK, {
   FaceCaptureResponse,
-  MatchFacesImage,
 } from '@regulaforensics/react-native-face-api';
 import {useNavigation} from '@react-navigation/native';
 import uuid from 'react-native-uuid';
@@ -23,71 +22,33 @@ let realm;
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 export default function SectionsDetails({route}) {
-  const {sectionId, length} = route.params;
-  const [sectionID, setSectionID] = useState(parseInt(sectionId));
+  const {section, classId} = route.params;
   const [profileImage, setProfileImage] = useState('');
-  const [sections, setSections] = useState([]);
+  // const [sections, setSections] = useState();
   const [studentDetails, setStudentDetails] = useState({});
-  const [data, setData] = useState([
-    {
-      id: uuid.v4(),
-      name: 'Sarah',
-      roll_no: 1,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Emma',
-      roll_no: 2,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Laura',
-      roll_no: 3,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Marie',
-      roll_no: 4,
-      section: 1,
-      avatar: '',
-    },
-    {
-      id: uuid.v4(),
-      name: 'Emily',
-      roll_no: 5,
-      section: 1,
-      avatar: '',
-    },
-  ]);
-  // console.log('length------------', length);
   const navigation = useNavigation();
-
-  // useEffect(() => {}, []);
-  // console.log(studentDetails[sectionId]);
-  const listData = [studentDetails[sectionID]];
-  console.log(listData[0]);
+  const [students, setStudents] = useState([]);
+  realm = initializeRealm();
+  console.log(section, classId);
   useEffect(() => {
-    realm = new Realm({path: 'UserDatabase.realm'});
-    const allSections = realm
-      .objects('user_details')
-      .sorted('section')
-      .map(section => section.section);
-    setSections(allSections);
-    const studentsBySection = {};
-    allSections.forEach(section => {
-      const studentsInSection = realm
-        .objects('user_details')
-        .filtered('section = $0', section);
-      studentsBySection[section] = studentsInSection;
-    });
-
-    setStudentDetails(studentsBySection);
+    const realm = initializeRealm();
+    // Get students of the selected class id and section from the 'Student' table
+    const studentsOfClassAndSection = realm
+      .objects('Student')
+      .filtered(`class = "${classId}" AND section = "${section}"`);
+    // Map the Results object to an array of objects
+    const studentsArray = studentsOfClassAndSection.map(student => ({
+      id: student.id,
+      school: student.school,
+      name: student.name,
+      father_name: student.father_name,
+      b_form_no: student.b_form_no,
+      class: student.class,
+      section: student.section,
+      // Add other properties as needed
+    }));
+    // Update the state with the array of objects
+    setStudents(studentsArray);
     FaceSDK.init(
       json => {
         const response = JSON.parse(json);
@@ -98,13 +59,16 @@ export default function SectionsDetails({route}) {
       },
       e => {},
     );
-    return () => {
-      realm.close();
-    };
-  }, []);
+    // Close the Realm instance
+    // realm.close();
+  }, [classId, section]);
+  // const realm = initializeRealm();
+  // const students1 = realm.objects('Student');
+  // console.log('Students:', students);
+  // console.log('------------', students);
 
-  const pickImage = (roll, name, section) => {
-    // console.log(roll, name, section);
+  const pickImage = (bform, name, section) => {
+    // console.log(bform, name, section);
     // return;
     const config = {
       cameraPositionIOS: 0,
@@ -119,13 +83,13 @@ export default function SectionsDetails({route}) {
           JSON.parse(faceCaptureResponse),
         );
         let img = response.image.bitmap;
-        setImage(img, roll, name, section);
+        setImage(img, bform, name, section);
       },
       e => {},
     );
   };
 
-  const setImage = (base64, roll, name, section) => {
+  const setImage = (base64, bform, name, section) => {
     // console.log(section, roll, name);
     // return;
     if (base64 == null) return;
@@ -140,25 +104,25 @@ export default function SectionsDetails({route}) {
         uri: 'data:image/jpeg;base64,' + base64,
       };
       // updateUser(section, roll, name, updatedImageData);
-      update_user_image(section, roll, name, updatedImageData);
+      update_user_image(section, bform, name, base64);
       // setData(updatedData);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const update_user_image = (section, roll_no, name, updatedImageData) => {
+  const update_user_image = (section, bform, name, updatedImageData) => {
+    // <-- Add the `realm` parameter
     // Convert the image object to a base64-encoded string
-    const base64Image = updatedImageData.uri.split(',')[1];
+    // const base64Image = updatedImageData.uri.split(',')[1];
 
     realm.write(() => {
       // Find the user with the given section, roll_no, and name
       const user = realm
-        .objects('user_details')
+        .objects('Student')
         .filtered(
-          'section = $0 AND roll_no = $1 AND name = $2',
+          'section = $0 AND b_form_no = $1 AND name = $2',
           section,
-          roll_no,
+          bform,
           name,
         )[0];
 
@@ -167,13 +131,16 @@ export default function SectionsDetails({route}) {
       } else {
         // Update the user's image
         realm.create(
-          'user_details',
+          'Student',
           {
-            id: user.id,
+            student_id: user.student_id,
+            school: user.school,
             name: user.name,
-            roll_no: user.roll_no,
+            father_name: user.father_name,
+            b_form_no: user.b_form_no,
+            class: user.class,
             section: user.section,
-            image: 'data:image/jpeg;base64,' + base64Image, // Set the image as a base64-encoded string
+            image: 'data:image/jpeg;base64,' + updatedImageData, // Set the image as a base64-encoded string
           },
           true,
         ); // Setting `true` for the third argument will update the existing user with the new values
@@ -193,6 +160,52 @@ export default function SectionsDetails({route}) {
     });
   };
 
+  // const update_user_image = (section, roll_no, name, updatedImageData) => {
+  //   // Convert the image object to a base64-encoded string
+  //   const base64Image = updatedImageData.uri.split(',')[1];
+
+  //   realm.write(() => {
+  //     // Find the user with the given section, roll_no, and name
+  //     const user = realm
+  //       .objects('user_details')
+  //       .filtered(
+  //         'section = $0 AND roll_no = $1 AND name = $2',
+  //         section,
+  //         roll_no,
+  //         name,
+  //       )[0];
+
+  //     if (!user) {
+  //       alert('User not found');
+  //     } else {
+  //       // Update the user's image
+  //       realm.create(
+  //         'user_details',
+  //         {
+  //           id: user.id,
+  //           name: user.name,
+  //           roll_no: user.roll_no,
+  //           section: user.section,
+  //           image: 'data:image/jpeg;base64,' + base64Image, // Set the image as a base64-encoded string
+  //         },
+  //         true,
+  //       ); // Setting `true` for the third argument will update the existing user with the new values
+
+  //       Alert.alert(
+  //         'Success',
+  //         'User image updated successfully',
+  //         [
+  //           {
+  //             text: 'Ok',
+  //             // onPress: () => navigation.navigate('Log'),
+  //           },
+  //         ],
+  //         {cancelable: false},
+  //       );
+  //     }
+  //   });
+  // };
+
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
@@ -204,7 +217,7 @@ export default function SectionsDetails({route}) {
             marginBottom: 20,
             // backgroundColor: 'green',
           }}>
-          Students List Section-{sectionID}
+          Students List Section-{section}
         </Text>
         <View>
           <View
@@ -228,8 +241,8 @@ export default function SectionsDetails({route}) {
       </View>
       <View style={styles.bodyView}>
         <FlatList
-          data={listData[0]}
-          keyExtractor={item => item.roll_no}
+          data={students}
+          keyExtractor={item => item.id}
           renderItem={({item, index}) => (
             <View style={styles.buttonContainerStyle}>
               <View
@@ -239,10 +252,12 @@ export default function SectionsDetails({route}) {
                   alignItems: 'center',
                   width: '100%',
                 }}>
-                <Text style={{fontSize: 18, color: 'black', left: 20}}>
-                  {item.roll_no}
+                <Text style={{fontSize: 18, color: 'black', left: 5}}>
+                  {item.b_form_no}
                 </Text>
-                <Text style={{fontSize: 18, color: 'black'}}>{item.name}</Text>
+                <Text style={{fontSize: 18, color: 'black', right: 15}}>
+                  {item.name}
+                </Text>
                 <View
                   style={{
                     justifyContent: 'center',
@@ -259,10 +274,10 @@ export default function SectionsDetails({route}) {
                       alignItems: 'center',
                     }}
                     onPress={() => {
-                      pickImage(item.roll_no, item.name, item.section);
+                      pickImage(item.b_form_no, item.name, item.section);
                     }}>
                     {item.image && (
-                      <Image source={{uri: item.image}} style={styles.image} />
+                      <Image source={item.image} style={styles.image} />
                     )}
 
                     {!item.image && (
@@ -286,31 +301,32 @@ export default function SectionsDetails({route}) {
       <View style={styles.bottomButtonView}>
         <TouchableOpacity
           style={styles.bottomButton}
-          onPress={() => {
-            // console.log('here', sectionID);
-            if (sectionID == 1) {
-              navigation.navigate('Sections');
-            } else {
-              // console.log('--------------');
-              // setSectionID(sectionID - 1);
-              setSectionID(id => id - 1);
-            }
-          }}>
+          // onPress={() => {
+          //   // console.log('here', sectionID);
+          //   if (sectionID == 1) {
+          //     navigation.navigate('Sections');
+          //   } else {
+          //     // console.log('--------------');
+          //     // setSectionID(sectionID - 1);
+          //     setSectionID(id => id - 1);
+          //   }
+          // }}
+        >
           <Ionicons name="arrow-back-circle-outline" size={20} color="black" />
           <Text style={styles.bottomButtonText}> Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomButton}
-          onPress={() => {
-            // console.log('here', sectionID);
-            if (sectionID === 1 || sectionID < length) {
-              // setSectionID(sectionID + 1);
-              // addSection();
-              // setSectionID(parseInt(sectionID + 1));
-              // setSectionID(id => parseInt(id + 1));
-              setSectionID(prevCounter => prevCounter + 1);
-            }
-          }}
+          // onPress={() => {
+          //   // console.log('here', sectionID);
+          //   if (sectionID === 1 || sectionID < length) {
+          //     // setSectionID(sectionID + 1);
+          //     // addSection();
+          //     // setSectionID(parseInt(sectionID + 1));
+          //     // setSectionID(id => parseInt(id + 1));
+          //     setSectionID(prevCounter => prevCounter + 1);
+          //   }
+          // }}
           // disabled={length ? true : false}
         >
           <Text style={styles.bottomButtonText}>Next </Text>

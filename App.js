@@ -2,35 +2,9 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import Realm from 'realm';
 import Nav from './src/navigation';
+import initializeRealm from './src/Realm/realm';
 
 export default function App() {
-  const initializeRealm = () => {
-    return new Realm({
-      path: 'UserDatabase.realm',
-      schema: [
-        {
-          name: 'user_details',
-          primaryKey: 'id',
-          properties: {
-            id: 'string',
-            name: 'string',
-            roll_no: 'string',
-            section: 'string',
-            image: 'string',
-          },
-        },
-        {
-          name: 'section_details',
-          primaryKey: 'section',
-          properties: {
-            section: 'string', // Section name as primary key
-            students: {type: 'list', objectType: 'user_details'}, // List of students in the section
-          },
-        },
-      ],
-    });
-  };
-
   useEffect(() => {
     const realm = initializeRealm();
 
