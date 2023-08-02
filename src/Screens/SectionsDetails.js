@@ -18,6 +18,7 @@ import uuid from 'react-native-uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Realm from 'realm';
+import Timer from '../components/CustomTimer';
 let realm;
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
@@ -209,16 +210,23 @@ export default function SectionsDetails({route}) {
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
-        <Text
-          style={{
-            fontSize: 25,
-            color: 'black',
-            fontWeight: 'bold',
-            marginBottom: 20,
-            // backgroundColor: 'green',
-          }}>
-          Students List Section-{section}
-        </Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text
+            style={{
+              fontSize: 25,
+              color: 'black',
+              fontWeight: 'bold',
+              marginBottom: 20,
+              left: -30,
+              // backgroundColor: 'green',
+            }}>
+            Section-{section}
+          </Text>
+          <View style={{left: 50, bottom: 3}}>
+            <Timer isActive={true} />
+          </View>
+        </View>
+
         <View>
           <View
             style={{

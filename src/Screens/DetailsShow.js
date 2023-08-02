@@ -6,14 +6,16 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Timmer from '../components/CustomTimer';
 
 export default function DetailsShow() {
   const navigation = useNavigation();
+  const [isActive, setIsActive] = useState(false);
   return (
     <View style={styles.container}>
+      <Text></Text>
       <View style={styles.innerView}>
         <View>
           <Image
@@ -21,7 +23,7 @@ export default function DetailsShow() {
             style={{height: 200, width: '200'}}
           />
         </View>
-        <Timmer />
+        <Timmer isActive={true} />
         <View style={{marginTop: 20}}>
           <Text style={{fontSize: 20, color: 'white', alignSelf: 'center'}}>
             Your assigned classes & Sections
@@ -53,7 +55,8 @@ export default function DetailsShow() {
               borderRadius: 10,
             }}
             onPress={() => {
-              //   navigation.navigate('Sections');
+              // setIsActive(true);
+              // navigation.navigate('ClassList');
               Alert.alert(
                 'Note',
                 'Timer will start you have to complete task within time are You ready?',
@@ -85,12 +88,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#103783',
     padding: 10,
+    justifyContent: 'center',
   },
 
   innerView: {
-    height: '100%',
+    height: 520,
     backgroundColor: '#7191BA',
     justifyContent: 'center',
+    padding: 10,
+    borderWidth: 1,
   },
   text: {
     color: 'white',

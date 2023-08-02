@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Realm from 'realm';
+import Timer from '../components/CustomTimer';
 let realm;
 export default function ClassList() {
   const navigation = useNavigation();
@@ -75,20 +76,23 @@ export default function ClassList() {
           // height: '10%',
           // width: '100%',
           backgroundColor: 'rgb(235,235,235)',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          // flexDirection: 'row',
+          // justifyContent: 'space-between',
+          // alignItems: 'center',
+          flexDirection: 'row',
         }}>
         <Text
           style={{
             fontSize: 30,
             color: 'black',
             fontWeight: 'bold',
-            // left: 10,
-            bottom: 7,
+            left: 5,
+            // bottom: 7,
           }}>
           Class List
         </Text>
+        <View style={{left: 75}}>
+          <Timer isActive={true} />
+        </View>
       </View>
       <View
         style={{

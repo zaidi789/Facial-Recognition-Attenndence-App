@@ -7,6 +7,7 @@ import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import moment from 'moment';
 import Realm from 'realm';
 import CustomTimer from '../components/Timer';
+import Timer from '../components/CustomTimer';
 let realm;
 export default function SectionsList({route}) {
   const navigation = useNavigation();
@@ -121,8 +122,8 @@ export default function SectionsList({route}) {
           // height: '10%',
           // width: '100%',
           backgroundColor: 'rgb(235,235,235)',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          // justifyContent: 'space-between',
+          // alignItems: 'center',
           flexDirection: 'row',
         }}>
         <Text
@@ -130,11 +131,14 @@ export default function SectionsList({route}) {
             fontSize: 30,
             color: 'black',
             fontWeight: 'bold',
-            left: 10,
-            bottom: 7,
+            left: 4,
+            bottom: 2,
           }}>
           Sections List
         </Text>
+        <View style={{left: 30}}>
+          <Timer isActive={true} />
+        </View>
       </View>
       <View
         style={{

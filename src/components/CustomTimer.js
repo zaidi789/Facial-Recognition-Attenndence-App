@@ -163,24 +163,24 @@ const getRemaining = time => {
   };
 };
 
-const Timer = () => {
-  const [remainingSecs, setRemainingSecs] = useState(600); // Initial value (you can change it)
-  const [isActive, setIsActive] = useState(false);
+const Timer = ({isActive}) => {
+  const [remainingSecs, setRemainingSecs] = useState(28800); // Initial value (you can change it)
+  // const [isActive, setIsActive] = useState(isActive);
   const {hours, mins, secs} = getRemaining(remainingSecs);
 
-  const toggle = () => {
-    setIsActive(!isActive);
-  };
+  // const toggle = () => {
+  //   setIsActive(!isActive);
+  // };
 
-  const startTimer = () => {
-    setIsActive(true);
-    BackgroundTimer.start();
-  };
+  // const startTimer = () => {
+  //   setIsActive(true);
+  //   BackgroundTimer.start();
+  // };
 
-  const stopTimer = () => {
-    setIsActive(false);
-    BackgroundTimer.stop();
-  };
+  // const stopTimer = () => {
+  //   setIsActive(false);
+  //   BackgroundTimer.stop();
+  // };
 
   useEffect(() => {
     let interval = null;
@@ -200,18 +200,18 @@ const Timer = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.timerText}>{`${hours}:${mins}:${secs}`}</Text>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={isActive ? stopTimer : startTimer}
         style={styles.button}>
         <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#07121B',
+    // backgroundColor: '#07121B',
     alignItems: 'flex-start',
     justifyContent: 'center',
     flexDirection: 'row',
@@ -228,9 +228,10 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   timerText: {
-    color: '#fff',
+    color: 'gray',
     fontSize: 30,
     paddingRight: 10,
+    fontWeight: 'bold',
   },
 });
 

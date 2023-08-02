@@ -19,6 +19,7 @@ import Entery from '../Screens/Entery';
 import DetailsShow from '../Screens/DetailsShow';
 import ClassList from '../Screens/ClassList';
 import DataEntryPage from '../Screens/DataEntry';
+import Test from '../Screens/Test';
 
 const Stack = createNativeStackNavigator();
 function HeaderLeft({navigation}) {
@@ -90,9 +91,10 @@ export default function Nav() {
         {/* <Stack.Screen name="DataEntryPage" component={DataEntryPage} /> */}
 
         {/* <Stack.Screen name="Main" component={Main} /> */}
+        <Stack.Screen name="Test" component={Test} />
 
-        <Stack.Screen name="ClassList" component={ClassList} />
         <Stack.Screen name="Entery" component={Entery} />
+        <Stack.Screen name="ClassList" component={ClassList} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen
           name="Login"

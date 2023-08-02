@@ -129,16 +129,71 @@ export default function Entery() {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../Images/background.jpg')}
+        source={require('../Images/BACKGROUND1.jpg')}
         resizeMode="stretch"
         style={styles.image}>
-        <TouchableOpacity
-          onPress={() => {
-            // navigation.navigate('Login');
-            addDummyData();
+        <View
+          style={{height: '30%', backgroundColor: 'transparent', padding: 25}}>
+          <Text
+            style={{
+              fontSize: 30,
+              color: 'blue',
+              marginTop: 20,
+              fontWeight: '900',
+            }}>
+            Welcome!
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#595cff',
+              marginTop: 10,
+              fontWeight: '900',
+            }}>
+            We're glad you're here.
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#595cff',
+              // marginTop: 20,
+              fontWeight: '900',
+            }}>
+            Lets get started
+          </Text>
+        </View>
+        <View
+          style={{
+            height: '50%',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            padding: 25,
+            // backgroundColor: 'green',
           }}>
-          <Text style={styles.text}>Let's Go</Text>
-        </TouchableOpacity>
+          <Text style={{color: '#595cff', textAlign: 'justify', fontSize: 16}}>
+            The Face Recognition Attendance System automates school attendance
+            using facial recognition. It identifies students, records real-time
+            attendance, and generates automated reports. This efficient and
+            secure app reduces manual work for teachers and improves
+            productivity with seamless integration and instant parent
+            notifications.
+          </Text>
+        </View>
+        <View
+          style={{
+            height: '20%',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Login');
+              // addDummyData();
+            }}
+            style={styles.button}>
+            <Text style={styles.text}>GET STARTED</Text>
+          </TouchableOpacity>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -150,18 +205,29 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    // justifyContent: 'flex-end',
+    // alignItems: 'flex-end',
   },
   text: {
     color: 'white',
-    fontSize: 30,
-    lineHeight: 50,
-    width: 200,
-    fontWeight: 'bold',
+    fontSize: 23,
+    // lineHeight: 50,
+    // width: 200,
+    fontWeight: '500',
     textAlign: 'center',
-    backgroundColor: '#000000c0',
-    bottom: 10,
-    right: 10,
+    // // backgroundColor: '#000000c0',
+    // bottom: 10,
+    // right: 10,
+  },
+  button: {
+    color: 'white',
+    width: 180,
+    height: 50,
+    // backgroundColor: '#000000c0',
+    backgroundColor: 'blue',
+    bottom: 30,
+    right: 25,
+    borderRadius: 10,
+    justifyContent: 'center',
   },
 });
