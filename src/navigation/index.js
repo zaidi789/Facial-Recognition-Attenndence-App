@@ -9,7 +9,7 @@ import CropImage from '../Screens/ImageCroping';
 import SectionsList from '../Screens/SectionsList';
 import SectionsDetails from '../Screens/SectionsDetails';
 import Login from '../Screens/Login';
-import ImageCompression from '../Screens/ImageCompression';
+// import ImageCompression from '../Screens/ImageCompression';
 import StartScreen from '../Screens/StartScreen';
 import {View, Image, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -119,7 +119,7 @@ export default function Nav() {
           component={SectionsDetails}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="CompressImage" component={ImageCompression} />
+        {/* <Stack.Screen name="CompressImage" component={ImageCompression} /> */}
         <Stack.Screen name="DetailsShow" component={DetailsShow} />
       </Stack.Navigator>
     </NavigationContainer>
