@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Timer from '../components/CustomTimer';
-let realm;
+
 export default function SectionsList({route}) {
   const navigation = useNavigation();
   const {ClassId} = route.params;

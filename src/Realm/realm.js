@@ -1,3 +1,4 @@
+import Realm from 'realm';
 export default initializeRealm = () => {
   return new Realm({
     path: 'UserDatabase.realm',

@@ -19,9 +19,7 @@ import FaceSDK, {
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Timer from '../components/CustomTimer';
 import TimerContext from '../components/TimmerContext';
-import {useExitAlertOnBack} from '../components/ExitAlertonBack';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 export default function SectionsDetails({route}) {

@@ -13,8 +13,6 @@ import base64 from 'react-native-base64';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Realm from 'realm';
-let realm;
 export default function Register() {
   const navigation = useNavigation();
   const [base64String, setBase64String] = useState('');
