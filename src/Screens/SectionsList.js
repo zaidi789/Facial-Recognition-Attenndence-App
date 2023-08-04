@@ -1,12 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import uuid from 'react-native-uuid';
-import CountDown from 'react-native-countdown-component';
-import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
-import moment from 'moment';
-import Realm from 'realm';
-import CustomTimer from '../components/Timer';
 import Timer from '../components/CustomTimer';
 let realm;
 export default function SectionsList({route}) {

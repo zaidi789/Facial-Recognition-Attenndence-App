@@ -1,18 +1,19 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
-import Realm from 'realm';
 import Nav from './src/navigation';
 import initializeRealm from './src/Realm/realm';
+import {TimerProvider} from './src/components/TimmerContext';
 
 export default function App() {
   useEffect(() => {
     const realm = initializeRealm();
-
-    // You can use 'realm' here or store it in a state variable if needed
-    // Make sure to close the realm instance when the component is unmounted
     return () => realm.close();
   }, []);
-  return <Nav />;
+  return (
+    <TimerProvider>
+      <Nav />
+    </TimerProvider>
+  );
 }
 
 const styles = StyleSheet.create({

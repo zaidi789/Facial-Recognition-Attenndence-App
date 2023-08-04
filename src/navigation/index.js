@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import FaceApiTest from '../components/FaceApiTest';
 import Main from '../Screens/Main';
 import Home from '../Screens/Home';
 import Register from '../Screens/Register';
@@ -20,6 +19,7 @@ import DetailsShow from '../Screens/DetailsShow';
 import ClassList from '../Screens/ClassList';
 import DataEntryPage from '../Screens/DataEntry';
 import Test from '../Screens/Test';
+import Login1 from '../Screens/Login1';
 
 const Stack = createNativeStackNavigator();
 function HeaderLeft({navigation}) {
@@ -91,9 +91,12 @@ export default function Nav() {
         {/* <Stack.Screen name="DataEntryPage" component={DataEntryPage} /> */}
 
         {/* <Stack.Screen name="Main" component={Main} /> */}
-        <Stack.Screen name="Test" component={Test} />
+        {/* <Stack.Screen name="Test" component={Test} /> */}
 
         <Stack.Screen name="Entery" component={Entery} />
+
+        <Stack.Screen name="LoginScreen" component={Login1} />
+
         <Stack.Screen name="ClassList" component={ClassList} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen

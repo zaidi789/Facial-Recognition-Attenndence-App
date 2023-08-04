@@ -162,7 +162,7 @@ export default function Register() {
             marginTop: 10,
             height: 50,
             width: 200,
-            backgroundColor: !isButtonDisabled ? '#e63946' : '#e0e1dd',
+            backgroundColor: !isButtonDisabled ? '#e63946' : '#ef340a',
           }}
           disabled={isButtonDisabled}
           onPress={() => {

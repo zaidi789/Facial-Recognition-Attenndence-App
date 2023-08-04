@@ -1,34 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {StyleSheet, Text, FlatList, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Realm from 'realm';
 import Timer from '../components/CustomTimer';
-let realm;
+import TimerContext, {useTimer} from '../components/TimmerContext';
+import {useExitAlertOnBack} from '../components/ExitAlertonBack';
+
 export default function ClassList() {
+  const {formattedTime} = useContext(TimerContext);
+  // const {remainingSecs} = useContext(TimerContext);
+  // const {isActive} = useTimer();
   const navigation = useNavigation();
   const [classes, setClasses] = useState([]);
-  const [classesNo, setClassesNo] = useState([]);
-
-  //   useEffect(() => {
-  //     realm = new Realm({path: 'UserDatabase.realm'});
-  //     const allSections = realm
-  //       .objects('Student')
-  //       .sorted('class')
-  //       .map(section => section.section);
-  //     setSections(allSections);
-  //     const studentsBySection = {};
-  //     allSections.forEach(section => {
-  //       const studentsInSection = realm
-  //         .objects('Student')
-  //         .filtered('section = $0', section);
-  //       studentsBySection[section] = studentsInSection;
-  //     });
-
-  //     setStudentDetails(studentsBySection);
-  //     return () => {
-  //       realm.close();
-  //     };
-  //   }, []);
+  useExitAlertOnBack(true);
   useEffect(() => {
     const realm = initializeRealm();
 
@@ -45,29 +28,9 @@ export default function ClassList() {
     realm.close();
   }, []);
 
-  // useEffect(() => {
-  //   const realm = initializeRealm();
-
-  //   // Get all unique classes from the 'Student' table
-  //   const allClasses = realm
-  //     .objects('Student')
-  //     .sorted('class')
-  //     .map(student => parseInt(student.class.split(' ')[1]));
-
-  //   // Get unique class numbers
-  //   const uniqueClasses = [...new Set(allClasses)];
-
-  //   // Update the state with the class list
-  //   setClasses(uniqueClasses);
-
-  //   // Close the Realm instance
-  //   realm.close();
-  // }, []);
-
-  //   console.log(classes);
   const uniqueClasses = [...new Set(classes)];
   const secLength = uniqueClasses.length;
-  console.log('Length is', uniqueClasses);
+  // console.log('Length is', uniqueClasses);
 
   return (
     <View style={styles.linearGradient}>
@@ -91,7 +54,17 @@ export default function ClassList() {
           Class List
         </Text>
         <View style={{left: 75}}>
-          <Timer isActive={true} />
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '700',
+              color: 'black',
+              alignSelf: 'center',
+              top: 10,
+            }}>
+            {formattedTime.hours}h {formattedTime.minutes}m{' '}
+            {formattedTime.seconds}s
+          </Text>
         </View>
       </View>
       <View
@@ -108,10 +81,11 @@ export default function ClassList() {
             <View style={styles.item}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Sections', {
+                  navigation.navigate('Students Details', {
                     ClassId: item,
                     // length: secLength,
                   });
+                  console.log('sending class no', item);
                 }}>
                 <View
                   style={{

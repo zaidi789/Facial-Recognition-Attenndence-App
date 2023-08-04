@@ -72,7 +72,6 @@ export default function Entery() {
 
   const addDummyData = () => {
     const realm = initializeRealm();
-    const sections = ['A', 'B', 'C', 'D', 'E'];
 
     try {
       realm.write(() => {
@@ -88,31 +87,26 @@ export default function Entery() {
           students: [],
         });
 
-        // Create 5 classes
-        for (let classNum = 1; classNum <= 5; classNum++) {
-          // Create 4 sections in each class
-          for (const sectionName of sections) {
-            // Create 5 students in each section
-            for (let studentNum = 1; studentNum <= 5; studentNum++) {
-              const studentName = `Student ${studentNum}`;
-              const bFormNo = `B${classNum}${sectionName}${studentNum}`;
+        // Create 10 classes
+        for (let classNum = 1; classNum <= 10; classNum++) {
+          // Create 10 students in each class
+          for (let studentNum = 1; studentNum <= 10; studentNum++) {
+            const studentName = `Student ${classNum}-${studentNum}`;
+            const bFormNo = `B${classNum}${studentNum}`;
 
-              const student = {
-                id: `${classNum}${sectionName}${studentNum}`, // Unique ID for the student based on class, section, and student number
-                student_id: `${classNum}${sectionName}${studentNum}`, // Unique ID for the student based on class, section, and student number
-                school: school,
-                name: studentName,
-                father_name: `Father ${studentNum}`,
-                b_form_no: bFormNo,
-                class: classNum, // Store numeric value for class
-                section: sectionName,
-                attendance: [],
-                image: '',
-              };
+            const student = {
+              student_id: `${classNum}${studentNum}`, // Unique ID for the student based on class and student number
+              school: school,
+              name: studentName,
+              father_name: `Father ${studentNum}`,
+              b_form_no: bFormNo,
+              class: classNum,
+              attendance: [],
+              image: '',
+            };
 
-              // Add the student to the school's students array
-              school.students.push(student);
-            }
+            // Add the student to the school's students array
+            school.students.push(student);
           }
         }
       });
@@ -175,8 +169,7 @@ export default function Entery() {
             using facial recognition. It identifies students, records real-time
             attendance, and generates automated reports. This efficient and
             secure app reduces manual work for teachers and improves
-            productivity with seamless integration and instant parent
-            notifications.
+            productivity with seamless integration and instant Evaluation.
           </Text>
         </View>
         <View

@@ -604,7 +604,7 @@ export default function Register() {
         }}>
         <View>
           <Image
-            source={require('../Images/profile.png')}
+            source={require('../Images/BAbyFace.jpg')}
             style={{
               height: 200,
               width: 200,

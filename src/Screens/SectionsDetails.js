@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,47 +9,70 @@ import {
   LogBox,
   Alert,
   Platform,
+  BackHandler,
 } from 'react-native';
 import FaceSDK, {
   FaceCaptureResponse,
+  LivenessResponse,
+  Enum,
 } from '@regulaforensics/react-native-face-api';
 import {useNavigation} from '@react-navigation/native';
-import uuid from 'react-native-uuid';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Realm from 'realm';
 import Timer from '../components/CustomTimer';
-let realm;
+import TimerContext from '../components/TimmerContext';
+import {useExitAlertOnBack} from '../components/ExitAlertonBack';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 export default function SectionsDetails({route}) {
-  const {section, classId} = route.params;
+  const {ClassId} = route.params;
+  const [classNo, setClassNo] = useState(parseInt(ClassId));
   const [profileImage, setProfileImage] = useState('');
-  // const [sections, setSections] = useState();
-  const [studentDetails, setStudentDetails] = useState({});
   const navigation = useNavigation();
   const [students, setStudents] = useState([]);
-  realm = initializeRealm();
-  console.log(section, classId);
-  useEffect(() => {
+  const [livenessStatus, setLivenessStatus] = useState('nil');
+  const {formattedTime} = useContext(TimerContext);
+
+  // console.log('recieved class no', ClassId);
+  // useExitAlertOnBack(false);
+  const fetchStudentsData = () => {
     const realm = initializeRealm();
-    // Get students of the selected class id and section from the 'Student' table
-    const studentsOfClassAndSection = realm
+    const studentsOfClass = realm
       .objects('Student')
-      .filtered(`class = "${classId}" AND section = "${section}"`);
-    // Map the Results object to an array of objects
-    const studentsArray = studentsOfClassAndSection.map(student => ({
-      id: student.id,
-      school: student.school,
+      .filtered(`class = "${classNo}"`);
+    const studentsArray = studentsOfClass.map(student => ({
+      id: student.student_id,
       name: student.name,
       father_name: student.father_name,
       b_form_no: student.b_form_no,
       class: student.class,
-      section: student.section,
+      image: student.image,
       // Add other properties as needed
     }));
-    // Update the state with the array of objects
-    setStudents(studentsArray);
+    setStudents([...studentsArray]);
+    realm.close();
+  };
+
+  useEffect(() => {
+    const realm = initializeRealm();
+
+    const studentsOfClass = realm
+      .objects('Student')
+      .filtered(`class = "${classNo}"`);
+    const studentsArray = studentsOfClass.map(student => ({
+      id: student.student_id,
+      name: student.name,
+      father_name: student.father_name,
+      b_form_no: student.b_form_no,
+      class: student.class,
+      image: student.image,
+      // Add other properties as needed
+    }));
+
+    setStudents([...studentsArray]);
+
+    // Close the Realm instance
+    realm.close();
     FaceSDK.init(
       json => {
         const response = JSON.parse(json);
@@ -60,15 +83,156 @@ export default function SectionsDetails({route}) {
       },
       e => {},
     );
-    // Close the Realm instance
-    // realm.close();
-  }, [classId, section]);
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        // Check if the user is on the specific screen where you want to handle the back button
+        if (classNo !== 1) {
+          // Handle the back button functionality for this specific screen
+          // Navigate to classNo - 1 if classNo > 1
+          if (classNo > 1) {
+            setClassNo(prevClassNo => prevClassNo - 1);
+          }
+          return true; // Return true to prevent default back button behavior
+        } else {
+          navigation.navigate('ClassList'); // Navigate to ClassList screen if classNo === 1
+          return true; // Return true to prevent default back button behavior
+        }
+        // return false; // Allow default back button behavior for other screens
+      },
+    );
+
+    // Remove the back button listener when the component unmounts
+    return () => {
+      backHandler.remove(), realm.close();
+    };
+
+    // Make sure to clean up the realm instance when the component unmounts
+  }, [classNo, navigation]);
+  // console.log(students);
+
+  // useEffect(() => {
+  //   const realm = initializeRealm();
+
+  //   const studentsGroupedByClass = fetchAllStudentsGroupedByClass(realm);
+  //   setStudentsByClass(studentsGroupedByClass);
+
+  //   // Close the Realm instance
+  //   realm.close();
+
+  //   // Make sure to clean up the realm instance when the component unmounts
+  //   return () => {
+  //     realm.close();
+  //   };
+  // }, []);
+  // const fetchStudentsByClass = (realm, classNumber) => {
+  //   return realm.objects('Student').filtered(`class = ${classNumber}`);
+  // };
+
+  // useEffect(() => {
+  //   const realm = initializeRealm();
+  //   const classNumber = classId; // Replace this with the desired class number from your state
+  //   const studentsOfClass = fetchStudentsByClass(realm, classNumber);
+
+  //   // Map the Results object to an array of objects
+  //   const studentsArray = studentsOfClass.map(student => ({
+  //     id: student.student_id,
+  //     name: student.name,
+  //     father_name: student.father_name,
+  //     b_form_no: student.b_form_no,
+  //     class: student.class,
+  //     // Add other properties as needed
+  //   }));
+
+  //   // Update the state with the array of objects
+  //   setStudents(studentsArray);
+
+  //   // Close the Realm instance
+  //   // realm.close();
+
+  //   // Make sure to clean up the realm instance when the component unmounts
+  //   return () => {
+  //     realm.close();
+  //   };
+  // }, [classId]);
+
+  // useEffect(() => {
+  //   const realm = initializeRealm();
+  //   // Get students of the selected class id and section from the 'Student' table
+  //   const studentsOfClassAndSection = realm
+  //     .objects('Student')
+  //     .filtered(`class = "${classId}" AND section = "${section}"`);
+  //   // Map the Results object to an array of objects
+  //   const studentsArray = studentsOfClassAndSection.map(student => ({
+  //     id: student.id,
+  //     school: student.school,
+  //     name: student.name,
+  //     father_name: student.father_name,
+  //     b_form_no: student.b_form_no,
+  //     class: student.class,
+  //     section: student.section,
+  //     // Add other properties as needed
+  //   }));
+  //   // Update the state with the array of objects
+  //   setStudents(studentsArray);
+  //   FaceSDK.init(
+  //     json => {
+  //       const response = JSON.parse(json);
+  //       if (!response['success']) {
+  //         console.log('Init failed: ');
+  //         console.log(json);
+  //       }
+  //     },
+  //     e => {},
+  //   );
+  //   // Close the Realm instance
+  //   // realm.close();
+  // }, [classId, section]);
   // const realm = initializeRealm();
   // const students1 = realm.objects('Student');
   // console.log('Students:', students);
   // console.log('------------', students);
 
-  const pickImage = (bform, name, section) => {
+  // useEffect(() => {
+  //   const realm = initializeRealm();
+
+  //   // Get all students from the 'Student' table
+  //   const allStudents = realm.objects('Student');
+
+  //   // Filter the students based on the selected classId
+  //   const studentsOfClass = allStudents.filtered(`class = ${classId}`);
+
+  //   // Map the Results object to an array of objects
+  //   const studentsArray = studentsOfClass.map(student => ({
+  //     id: student.student_id,
+  //     school: student.school,
+  //     name: student.name,
+  //     father_name: student.father_name,
+  //     b_form_no: student.b_form_no,
+  //     class: student.class,
+  //     section: student.section,
+  //     // Add other properties as needed
+  //   }));
+
+  //   // Update the state with the array of objects
+  //   setStudents(studentsArray);
+
+  //   FaceSDK.init(
+  //     json => {
+  //       const response = JSON.parse(json);
+  //       if (!response['success']) {
+  //         console.log('Init failed: ');
+  //         console.log(json);
+  //       }
+  //     },
+  //     e => {},
+  //   );
+
+  //   // Close the Realm instance
+  //   // realm.close();
+  // }, [classId]);
+
+  const pickImage = (bform, name) => {
     // console.log(bform, name, section);
     // return;
     const config = {
@@ -77,52 +241,82 @@ export default function SectionsDetails({route}) {
       cameraSwitchEnabled: true,
       isCloseButtonEnabled: true,
     };
-    FaceSDK.presentFaceCaptureActivityWithConfig(
-      config,
-      faceCaptureResponse => {
-        const response = FaceCaptureResponse.fromJson(
-          JSON.parse(faceCaptureResponse),
-        );
-        let img = response.image.bitmap;
-        setImage(img, bform, name, section);
+    FaceSDK.startLiveness(
+      result => {
+        result = LivenessResponse.fromJson(JSON.parse(result));
+        let img = result.bitmap;
+        setImage(img, bform, name, classNo);
+        // setImage(true, result.bitmap, Enum.ImageType.LIVE);
+        // if (result.bitmap != null)
+        //   // setLivenessStatus(
+        //   //   result['liveness'] == Enum.LivenessStatus.PASSED
+        //   //     ? 'passed'
+        //   //     : 'unknown',
+        //   // );
       },
       e => {},
     );
+    // FaceSDK.presentFaceCaptureActivityWithConfig(
+    //   config,
+    //   faceCaptureResponse => {
+    //     const response = FaceCaptureResponse.fromJson(
+    //       JSON.parse(faceCaptureResponse),
+    //     );
+    //     let img = response.image.bitmap;
+    //     setImage(img, bform, name, classNo);
+    //   },
+    //   e => {},
+    // );
   };
 
-  const setImage = (base64, bform, name, section) => {
-    // console.log(section, roll, name);
-    // return;
+  const setImage = (base64, bform, name, classNo) => {
     if (base64 == null) return;
     try {
       setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
-      // const updatedData = [...data];
-      // updatedData[idx] = {
-      //   ...data[idx],
-      //   avatar: {uri: 'data:image/jpeg;base64,' + base64},
-      // };
       const updatedImageData = {
         uri: 'data:image/jpeg;base64,' + base64,
       };
-      // updateUser(section, roll, name, updatedImageData);
-      update_user_image(section, bform, name, base64);
-      // setData(updatedData);
+      update_user_image(classNo, bform, name, base64);
+      // Call the function to fetch and update the students data again
+      fetchStudentsData();
     } catch (error) {
       console.log(error);
     }
   };
-  const update_user_image = (section, bform, name, updatedImageData) => {
-    // <-- Add the `realm` parameter
+
+  // const setImage = (base64, bform, name, classNo) => {
+  //   // console.log(section, roll, name);
+  //   // return;
+  //   if (base64 == null) return;
+  //   try {
+  //     setProfileImage({uri: 'data:image/jpeg;base64,' + base64});
+  //     // const updatedData = [...data];
+  //     // updatedData[idx] = {
+  //     //   ...data[idx],
+  //     //   avatar: {uri: 'data:image/jpeg;base64,' + base64},
+  //     // };
+  //     const updatedImageData = {
+  //       uri: 'data:image/jpeg;base64,' + base64,
+  //     };
+  //     // updateUser(section, roll, name, updatedImageData);
+  //     update_user_image(classNo, bform, name, base64);
+  //     // setData(updatedData);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const update_user_image = (classNo, bform, name, base64) => {
     // Convert the image object to a base64-encoded string
     // const base64Image = updatedImageData.uri.split(',')[1];
-
+    const realm = initializeRealm();
     realm.write(() => {
-      // Find the user with the given section, roll_no, and name
+      // Find the user with the given classId, b_form_no, and name
       const user = realm
         .objects('Student')
         .filtered(
-          'section = $0 AND b_form_no = $1 AND name = $2',
-          section,
+          'class = $0 AND b_form_no = $1 AND name = $2',
+          classNo,
           bform,
           name,
         )[0];
@@ -140,8 +334,7 @@ export default function SectionsDetails({route}) {
             father_name: user.father_name,
             b_form_no: user.b_form_no,
             class: user.class,
-            section: user.section,
-            image: 'data:image/jpeg;base64,' + updatedImageData, // Set the image as a base64-encoded string
+            image: 'data:image/jpeg;base64,' + base64, // Set the image as a base64-encoded string
           },
           true,
         ); // Setting `true` for the third argument will update the existing user with the new values
@@ -161,52 +354,6 @@ export default function SectionsDetails({route}) {
     });
   };
 
-  // const update_user_image = (section, roll_no, name, updatedImageData) => {
-  //   // Convert the image object to a base64-encoded string
-  //   const base64Image = updatedImageData.uri.split(',')[1];
-
-  //   realm.write(() => {
-  //     // Find the user with the given section, roll_no, and name
-  //     const user = realm
-  //       .objects('user_details')
-  //       .filtered(
-  //         'section = $0 AND roll_no = $1 AND name = $2',
-  //         section,
-  //         roll_no,
-  //         name,
-  //       )[0];
-
-  //     if (!user) {
-  //       alert('User not found');
-  //     } else {
-  //       // Update the user's image
-  //       realm.create(
-  //         'user_details',
-  //         {
-  //           id: user.id,
-  //           name: user.name,
-  //           roll_no: user.roll_no,
-  //           section: user.section,
-  //           image: 'data:image/jpeg;base64,' + base64Image, // Set the image as a base64-encoded string
-  //         },
-  //         true,
-  //       ); // Setting `true` for the third argument will update the existing user with the new values
-
-  //       Alert.alert(
-  //         'Success',
-  //         'User image updated successfully',
-  //         [
-  //           {
-  //             text: 'Ok',
-  //             // onPress: () => navigation.navigate('Log'),
-  //           },
-  //         ],
-  //         {cancelable: false},
-  //       );
-  //     }
-  //   });
-  // };
-
   return (
     <View style={styles.linearGradient}>
       <View style={styles.titleView}>
@@ -220,10 +367,20 @@ export default function SectionsDetails({route}) {
               left: -30,
               // backgroundColor: 'green',
             }}>
-            Section-{section}
+            Class-{classNo}
           </Text>
           <View style={{left: 50, bottom: 3}}>
-            <Timer isActive={true} />
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: 'black',
+                alignSelf: 'center',
+                top: 8,
+              }}>
+              {formattedTime.hours}h {formattedTime.minutes}m{' '}
+              {formattedTime.seconds}s
+            </Text>
           </View>
         </View>
 
@@ -235,13 +392,13 @@ export default function SectionsDetails({route}) {
               width: '100%',
             }}>
             <View style={{width: '33%'}}>
-              <Text style={styles.heading}> Roll_NO</Text>
+              <Text style={styles.heading}> B_Form</Text>
             </View>
-            <View style={{width: '33%', left: 10}}>
+            <View style={{width: '33%', left: 5}}>
               <Text style={styles.heading}>Name</Text>
             </View>
 
-            <View style={{width: '33%', left: 40}}>
+            <View style={{width: '33%', left: 45}}>
               <Text style={styles.heading}> Image</Text>
             </View>
           </View>
@@ -282,17 +439,17 @@ export default function SectionsDetails({route}) {
                       alignItems: 'center',
                     }}
                     onPress={() => {
-                      pickImage(item.b_form_no, item.name, item.section);
+                      pickImage(item.b_form_no, item.name);
                     }}>
                     {item.image && (
-                      <Image source={item.image} style={styles.image} />
+                      <Image source={{uri: item.image}} style={styles.image} />
                     )}
 
                     {!item.image && (
                       <FontAwesome name="camera" size={35} color="black" />
                     )}
                   </TouchableOpacity>
-                  {item.avatar && (
+                  {item.image && (
                     <TouchableOpacity
                       onPress={() => {
                         pickImage(index);
@@ -309,34 +466,33 @@ export default function SectionsDetails({route}) {
       <View style={styles.bottomButtonView}>
         <TouchableOpacity
           style={styles.bottomButton}
-          // onPress={() => {
-          //   // console.log('here', sectionID);
-          //   if (sectionID == 1) {
-          //     navigation.navigate('Sections');
-          //   } else {
-          //     // console.log('--------------');
-          //     // setSectionID(sectionID - 1);
-          //     setSectionID(id => id - 1);
-          //   }
-          // }}
-        >
+          onPress={() => {
+            // console.log('here', sectionID);
+            if (classNo === 1) {
+              navigation.navigate('ClassList');
+            } else {
+              // ClassId = -1;
+              // console.log('--------------');
+              // setSectionID(sectionID - 1);
+              setClassNo(id => id - 1);
+            }
+          }}>
           <Ionicons name="arrow-back-circle-outline" size={20} color="black" />
           <Text style={styles.bottomButtonText}> Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomButton}
-          // onPress={() => {
-          //   // console.log('here', sectionID);
-          //   if (sectionID === 1 || sectionID < length) {
-          //     // setSectionID(sectionID + 1);
-          //     // addSection();
-          //     // setSectionID(parseInt(sectionID + 1));
-          //     // setSectionID(id => parseInt(id + 1));
-          //     setSectionID(prevCounter => prevCounter + 1);
-          //   }
-          // }}
-          // disabled={length ? true : false}
-        >
+          onPress={() => {
+            // console.log('here', sectionID);
+            if (classNo === 1 || classNo < 10) {
+              // setSectionID(sectionID + 1);
+              // addSection();
+              // setSectionID(parseInt(sectionID + 1));
+              // setSectionID(id => parseInt(id + 1));
+              setClassNo(prevCounter => prevCounter + 1);
+            }
+          }}
+          disabled={classNo == 10 ? true : false}>
           <Text style={styles.bottomButtonText}>Next </Text>
           <Ionicons
             name="arrow-forward-circle-outline"
@@ -389,6 +545,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
+    left: -10,
   },
   bottomButton: {
     backgroundColor: 'rgb(235,235,235)',

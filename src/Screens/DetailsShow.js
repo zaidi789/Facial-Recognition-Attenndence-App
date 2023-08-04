@@ -6,24 +6,36 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Timmer from '../components/CustomTimer';
+import TimerContext, {useTimer} from '../components/TimmerContext';
 
 export default function DetailsShow() {
   const navigation = useNavigation();
-  const [isActive, setIsActive] = useState(false);
+  // const isActive = useTimer();
+  const {formattedTime} = useContext(TimerContext);
   return (
     <View style={styles.container}>
       <Text></Text>
       <View style={styles.innerView}>
         <View>
           <Image
-            source={require('../Images/face.png')}
+            source={require('../Images/BAbyFace.jpg')}
             style={{height: 200, width: '200'}}
           />
         </View>
-        <Timmer isActive={true} />
+        {/* <Timmer isActive={isActive} /> */}
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: '700',
+            color: 'black',
+            alignSelf: 'center',
+          }}>
+          {formattedTime.hours} : {formattedTime.minutes} :{' '}
+          {formattedTime.seconds}
+        </Text>
         <View style={{marginTop: 20}}>
           <Text style={{fontSize: 20, color: 'white', alignSelf: 'center'}}>
             Your assigned classes & Sections
