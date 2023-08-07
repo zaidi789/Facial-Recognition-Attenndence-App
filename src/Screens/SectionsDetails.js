@@ -229,28 +229,28 @@ export default function SectionsDetails({route}) {
   //   // Close the Realm instance
   //   // realm.close();
   // }, [classId]);
-
+  // const config = {
+  //   cameraPositionIOS: 0,
+  //   // cameraId: 1,
+  //   cameraSwitchEnabled: true,
+  //   // isCloseButtonEnabled: true,
+  // };
   const pickImage = (bform, name) => {
     // console.log(bform, name, section);
     // return;
-    const config = {
-      cameraPositionIOS: 0,
-      cameraId: 1,
-      cameraSwitchEnabled: true,
-      isCloseButtonEnabled: true,
-    };
+
     FaceSDK.startLiveness(
+      // config,
       result => {
         result = LivenessResponse.fromJson(JSON.parse(result));
         let img = result.bitmap;
-        setImage(img, bform, name, classNo);
         // setImage(true, result.bitmap, Enum.ImageType.LIVE);
-        // if (result.bitmap != null)
-        //   // setLivenessStatus(
-        //   //   result['liveness'] == Enum.LivenessStatus.PASSED
-        //   //     ? 'passed'
-        //   //     : 'unknown',
-        //   // );
+        if (result.bitmap != null)
+          setLivenessStatus(
+            result['liveness'] == Enum.LivenessStatus.PASSED
+              ? setImage(img, bform, name, classNo)
+              : 'unknown',
+          );
       },
       e => {},
     );

@@ -4,6 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import Timer from '../components/CustomTimer';
 import TimerContext, {useTimer} from '../components/TimmerContext';
 import {useExitAlertOnBack} from '../components/ExitAlertonBack';
+import initializeRealm from '../Realm/realm';
 
 export default function ClassList() {
   const {formattedTime} = useContext(TimerContext);
