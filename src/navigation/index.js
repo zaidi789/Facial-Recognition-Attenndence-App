@@ -10,6 +10,7 @@ import Entery from '../Screens/Entery';
 import DetailsShow from '../Screens/DetailsShow';
 import ClassList from '../Screens/ClassList';
 import Login1 from '../Screens/Login1';
+import LivenessCam from '../components/LivenessCam';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,8 @@ export default function Nav() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="LivenessCam" component={LivenessCam} />
+
         <Stack.Screen name="Entery" component={Entery} />
 
         <Stack.Screen name="LoginScreen" component={Login1} />
