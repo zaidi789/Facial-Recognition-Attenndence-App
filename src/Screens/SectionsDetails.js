@@ -238,9 +238,13 @@ export default function SectionsDetails({route}) {
   const pickImage = (bform, name) => {
     // console.log(bform, name, section);
     // return;
-
-    FaceSDK.startLiveness(
-      // config,
+    const config = {
+      // cameraPositionIOS: 0,
+      cameraId: 0,
+      // cameraSwitchEnabled: true,
+    };
+    FaceSDK.startLivenessWithConfig(
+      config,
       result => {
         result = LivenessResponse.fromJson(JSON.parse(result));
         let img = result.bitmap;
@@ -254,7 +258,7 @@ export default function SectionsDetails({route}) {
       },
       e => {},
     );
-    // FaceSDK.presentFaceCaptureActivityWithConfig(
+    // FaceSDK.startLivenessWithConfig(
     //   config,
     //   faceCaptureResponse => {
     //     const response = FaceCaptureResponse.fromJson(

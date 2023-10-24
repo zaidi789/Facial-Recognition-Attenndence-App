@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "@regulaforensics/react-native-face-api": "^5.1.6",
@@ -21,6 +22,7 @@
     "react-native-axios": "^0.17.1",
     "react-native-background-timer": "^2.4.1",
     "react-native-base64": "^0.2.1",
+    "react-native-camera": "^4.2.1",
     "react-native-linear-gradient": "^2.7.3",
     "react-native-material-dropdown": "^0.11.1",
     "react-native-paper": "^5.9.1",
@@ -29,6 +31,7 @@
     "react-native-select-dropdown": "^3.3.4",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-vision-camera": "^2.15.5",
     "realm": "^11.10.1",
     "reinput": "^3.7.2"
   },

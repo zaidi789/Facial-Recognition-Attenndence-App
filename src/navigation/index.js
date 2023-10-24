@@ -19,21 +19,14 @@ export default function Nav() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="LivenessCam" component={LivenessCam} />
-
-        <Stack.Screen name="Entery" component={Entery} />
-
-        <Stack.Screen name="LoginScreen" component={Login1} />
-
         <Stack.Screen name="ClassList" component={ClassList} />
+        <Stack.Screen name="Entery" component={Entery} />
+        <Stack.Screen name="LoginScreen" component={Login1} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="StartScreen" component={StartScreen} />
         <Stack.Screen name="Sections" component={SectionsList} />
-        <Stack.Screen
-          name="Students Details"
-          component={SectionsDetails}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="Students Details" component={SectionsDetails} />
         {/* <Stack.Screen name="CompressImage" component={ImageCompression} /> */}
         <Stack.Screen name="DetailsShow" component={DetailsShow} />
       </Stack.Navigator>

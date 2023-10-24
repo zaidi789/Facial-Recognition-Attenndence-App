@@ -82,6 +82,10 @@ android {
         versionName "1.0"
     
     }
+    defaultConfig {
+    missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -115,6 +119,7 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
+    implementation project(':react-native-camera')
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-background-timer')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
